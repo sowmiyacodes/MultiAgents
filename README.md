@@ -2,7 +2,7 @@
 
 **Team Members : Sowmiya Arunachalam, Pazhani Vel B, Bhavana Kumari D**
 
-**#AgentSpec — ThinkAgain**
+**AgentSpec — ThinkAgain**
 
 ## Evidence-Driven Multi-Agent Learning System
 
