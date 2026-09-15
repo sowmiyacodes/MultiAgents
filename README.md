@@ -1,8 +1,11 @@
-# AgentSpec-ThinkAgain AI
+**Team Name:MultiAgents**
+**Team Members : Sowmiya Arunachalam, Pazhani Vel B, Bhavana Kumari D**
+
+**#AgentSpec — ThinkAgain**
 
 ## Evidence-Driven Multi-Agent Learning System
 
-**ThinkAgain AI** is a multi-agent educational system designed to determine whether a student truly understands a concept rather than simply producing a correct answer.
+**ThinkAgain** is a multi-agent educational system designed to determine whether a student truly understands a concept rather than simply producing a correct answer.
 
 The system identifies conceptual misconceptions, guides the student through Socratic questioning, verifies understanding using a fresh transfer task, evaluates the evidence, maintains persistent learning state, and adapts future interactions based on previous performance.
 
