@@ -98,7 +98,7 @@ fails loudly at the boundary where you can still see it.
 | `slice/llm.py:240` · `_parse` | Validation |
 | `slice/llm.py:247` · `_repair` | One repair pass: shows the model its own output and the validation error |
 | `slice/llm.py:226` · `_strip_fence` | Forgives a markdown fence — a formatting habit, not a broken contract |
-| `slice/records.py:45` · `Version` | The envelope every record travels in |
+| `slice/records.py:42` · `Version` | The envelope every record travels in |
 | `slice/retrieve.py:118` · `search` | The corpus boundary — text arrives as a `Chunk` with an id, not as loose prose |
 | `slice/callback.py:37` · `answer` | The human boundary — the one place prose is unavoidable |
 
@@ -132,7 +132,7 @@ infinite loop. Every loop stops on something real.
 | `slice/budget.py:56` · `Budget.check_tokens` | Called **before** a request, not after |
 | `slice/budget.py:69` · `Budget.attempt` | Per-step allowance; raises when spent |
 | `slice/budget.py:82` · `Budget.reset_attempts` | Cleared on genuine success, so a later retry starts fresh |
-| `slice/runner.py:51` · `advance` | `max_steps` — a fence on the state machine itself |
+| `slice/runner.py:75` · `advance` | `max_steps` — a fence on the state machine itself |
 
 **Two bounds, and they must not share a counter.** A *spend limit* bounds cost —
 tokens, attempts, dollars — and that is the whole job of `slice/budget.py`. A
@@ -225,7 +225,7 @@ never does.
 
 | | |
 |---|---|
-| `slice/records.py:40` · `RunState.is_suspended` | Suspended is not terminal — and not only about humans |
+| `slice/records.py:37` · `RunState.is_suspended` | Suspended is not terminal — and not only about humans |
 | `slice/callback.py:23` · `ask` | Parks the question, suspends the run, returns immediately |
 | `slice/callback.py:37` · `answer` | Appends the answer as an `expert_answer` record — free text — and wakes the run |
 | `slice/callback.py:56` · `sweep` | Times out unanswered questions into `unresolved_no_expert` |
@@ -300,9 +300,9 @@ sequencing *between* steps.
 
 | | |
 |---|---|
-| `slice/runner.py:51` · `advance` | The state machine. Knows nothing about your domain |
-| `slice/runner.py:31` · `Context` | What a step is handed |
-| `slice/runner.py:45` · `Flow` | What a domain must provide — see `demo/flow.py` |
+| `slice/runner.py:75` · `advance` | The state machine. Knows nothing about your domain |
+| `slice/runner.py:38` · `Context` | What a step is handed |
+| `slice/runner.py:68` · `Flow` | What a domain must provide — see `demo/flow.py` |
 
 **This is a constraint argument, not a law of nature.** A planner that logs the
 action it chose, and why, is exactly as auditable as any other traced system —
@@ -317,6 +317,39 @@ price. Reach for it when you can afford to trace it and bound it.
 **Resume is free.** There is no separate resume path to keep in sync: a
 suspended run is just a run in a state whose handler is "wait", so calling
 `advance` again is all resuming is.
+
+#### Pedagogical Flow: The Boundary Loop
+
+```
+Student
+  |
+  v
+Diagnostic
+  |
+  v
+Planner
+  |
+  v
+Tutor R8
+  |
+  v
+Student Response
+  |
+  v
+Evaluator
+  |
+  +---- wrong ----> Planner/Tutor
+  |
+  +---- 3 Socratic wrong answers ----> Backward Loop
+  |
+  +---- Socratic pass ----> Transfer
+  |
+  v
+Complete
+```
+
+The Planner recommends pedagogical actions; deterministic Python controls execution.
+
 
 ### 8. At least one assertion a human is not making by eye
 
@@ -372,7 +405,7 @@ in front of judges.
 | `slice/llm.py:122` · `complete` | Falls back to a different provider family on 429/5xx |
 | `slice/callback.py:56` · `sweep` | No expert → recorded unknown, run continues |
 | `slice/retrieve.py:118` · `search` | Empty corpus → say so, invent nothing |
-| `slice/runner.py:96` · `_fail` | Records **why** a run stopped, into the replayable history |
+| `slice/runner.py:177` · `_fail` | Records **why** a run stopped, into the replayable history |
 
 **A run that fails without leaving a reason is the one you cannot debug.**
 Every failure path writes a `failure` record with a kind and a detail, so
