@@ -1,4 +1,4 @@
-# PRE-EVENT-ASSETS
+# PRE-EVENT-ASSETS 
 
 This file declares the work and materials prepared before the Agent-a-Thon.
 
