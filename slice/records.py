@@ -20,6 +20,7 @@ from typing import Any
 class RunState(str, Enum):
     DRAFTING = "drafting"
     GATING = "gating"
+    PROBING = "probing"
     AWAITING_EXPERT = "awaiting_expert"
     EVALUATING = "evaluating"
     COMPLETE = "complete"

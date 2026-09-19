@@ -1,4 +1,22 @@
+from typing import Literal
 from pydantic import BaseModel, Field
+
+PlannerActionType = Literal[
+    "ASK_SOCRATIC",
+    "ASK_TRANSFER",
+    "BACKWARD_REMEDIATE",
+    "REINFORCE",
+    "COMPLETE",
+]
+
+VALID_PLANNER_ACTIONS = {
+    "ASK_SOCRATIC",
+    "ASK_TRANSFER",
+    "BACKWARD_REMEDIATE",
+    "REINFORCE",
+    "COMPLETE",
+}
+
 
 
 class DiagnosticResult(BaseModel):
@@ -79,6 +97,24 @@ class TransferTask(BaseModel):
     )
 
 
+class BackwardLoopRecord(BaseModel):
+    reason: str = Field(
+        description="Reason the backward loop was triggered."
+    )
+
+    wrong_socratic_count: int = Field(
+        description="Number of wrong Socratic answers that triggered the loop."
+    )
+
+    backward_loop_count: int = Field(
+        description="How many backward loops have occurred in this run."
+    )
+
+    misconception: str = Field(
+        description="The targeted misconception being revisited."
+    )
+
+
 class LearningState(BaseModel):
     misconception: str = Field(
         description="The tracked misconception."
@@ -101,3 +137,53 @@ class LearningState(BaseModel):
     recommended_next_action: str = Field(
         description="Recommended next action for a future encounter."
     )
+
+    wrong_socratic_count: int = 0
+    backward_loop_count: int = 0
+
+
+class PlannerDecision(BaseModel):
+    action: str = Field(
+        description="Allowed pedagogical actions: ASK_SOCRATIC, ASK_TRANSFER, BACKWARD_REMEDIATE, REINFORCE, COMPLETE."
+    )
+    reason: str = Field(
+        description="Pedagogical rationale for selecting this action."
+    )
+    pedagogical_goal: str = Field(
+        description="Specific pedagogical goal or concept focus for this step."
+    )
+    preferred_angle: str = Field(
+        description="Preferred angle identifier or strategy for the tutor."
+    )
+    difficulty: str = Field(
+        default="medium",
+        description="Target difficulty level (e.g. foundational, easy, medium, hard)."
+    )
+    focus: str = Field(
+        default="boundary_elimination",
+        description="Core focus of the pedagogical intervention."
+    )
+
+
+class TutorResponse(BaseModel):
+    phase: str = Field(
+        description="Tutoring phase: 'socratic', 'transfer', or 'explanation'."
+    )
+    question: str = Field(
+        description="Student-facing Socratic question, transfer task prompt, or explanation text."
+    )
+    pedagogical_goal: str = Field(
+        description="What reasoning this question or task is intended to elicit."
+    )
+    angle_id: str = Field(
+        default="FOUNDATIONAL",
+        description="The reasoning angle or task ID used."
+    )
+    explanation: str | None = Field(
+        default=None,
+        description="Short worked explanation when explicitly requested."
+    )
+    difficulty: str = Field(
+        default="medium",
+        description="Difficulty level of the question or task."
+    )
