@@ -43,3 +43,32 @@ class StudentResponse(BaseModel):
     response: str = Field(
         description="The student's response to the Socratic question."
     )
+
+class EvaluationResult(BaseModel):
+    outcome: str = Field(
+        description=(
+            "Evaluation outcome. Use PASS, REINFORCE, or UNCERTAIN."
+        )
+    )
+
+    confidence: float = Field(
+        ge=0.0,
+        le=1.0,
+        description="Confidence in the evaluation from 0 to 1."
+    )
+
+    evidence: list[str] = Field(
+        min_length=1,
+        max_length=3,
+        description=(
+            "Concrete evidence from the student's response "
+            "supporting the evaluation."
+        )
+    )
+
+    reasoning_assessment: str = Field(
+        description=(
+            "Assessment of whether the student's reasoning shows "
+            "understanding of complete boundary elimination."
+        )
+    )
