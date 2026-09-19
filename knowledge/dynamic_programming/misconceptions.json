@@ -1,0 +1,45 @@
+{
+  "topic": "dynamic_programming",
+  "misconceptions": [
+    {
+      "id": "DP_INCORRECT_STATE_DEFINITION",
+      "display_name": "Incorrect State Definition",
+      "description": "Student defines a DP state that does not capture enough information to compute future states",
+      "observable_patterns": [
+        "State is too coarse (misses a dimension needed)",
+        "State doesn't distinguish cases that need different solutions",
+        "Student says 'dp[i] = answer at position i' without defining what 'answer' means precisely"
+      ],
+      "invariant": "dp[state] must uniquely determine the optimal value for that subproblem. The state must capture ALL variables that affect future decisions.",
+      "severity": "foundational",
+      "socratic_angles": ["STATE_DEFINITION", "COUNTEREXAMPLE", "INVARIANT_RESTATEMENT"],
+      "transfer_templates": [
+        {
+          "id": "TRANSFER_DP_STATE_1",
+          "question": "0/1 Knapsack: items with weights [1,3,4,5], values [1,4,5,7], capacity=7\n\nA student defines dp[i] = max value using first i items. Is this sufficient?\nIf I tell you dp[2]=4, can you compute the answer for capacity=7?",
+          "target_reasoning": "dp[i] alone is insufficient — you also need the remaining capacity. Correct state: dp[i][w] = max value using first i items with capacity w."
+        }
+      ]
+    },
+    {
+      "id": "DP_INCORRECT_TRANSITION",
+      "display_name": "Incorrect Transition",
+      "description": "Student writes a transition that doesn't correctly express how current state depends on previous states",
+      "observable_patterns": [
+        "Uses dp[i-1] when dp[i-2] is needed",
+        "Transition doesn't account for include/exclude choice",
+        "Incorrect index offset in transition"
+      ],
+      "invariant": "The transition must be provably correct: it must handle all valid choices at the current step and choose the optimal one.",
+      "severity": "moderate",
+      "socratic_angles": ["TRANSITION_PROOF", "COUNTEREXAMPLE", "TRACE_THROUGH"],
+      "transfer_templates": [
+        {
+          "id": "TRANSFER_DP_TRANS_1",
+          "question": "Fibonacci: dp[i] = dp[i-1] + dp[i-1] (student's transition)\n\nCompute dp[4] using this transition with dp[0]=0, dp[1]=1.\nWhat's wrong with the transition? What should it be?",
+          "target_reasoning": "dp[4] = dp[3]+dp[3] = 2*dp[3] which doubles every step. Correct: dp[i] = dp[i-1] + dp[i-2] (sum of previous TWO states)."
+        }
+      ]
+    }
+  ]
+}

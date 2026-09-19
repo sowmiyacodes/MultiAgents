@@ -38,8 +38,12 @@ The diagnosis must answer:
 1. What misconception is present?
 2. What concrete evidence in the student's attempt supports it?
 3. What reasoning pattern appears to be causing the error?
+4. What is the student's current knowledge level (e.g., beginner, foundational, intermediate)?
+5. What weak concepts or prerequisite gaps are detected?
+6. What concept or invariant needs to be diagnosed next?
 
 If the evidence is insufficient, return UNCERTAIN.
+
 
 Do not fix the student's code.
 Do not teach the student.

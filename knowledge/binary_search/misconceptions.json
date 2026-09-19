@@ -1,0 +1,274 @@
+{
+  "topic": "binary_search",
+  "display_name": "Binary Search",
+  "misconceptions": [
+    {
+      "id": "M1_INCOMPLETE_ELIMINATION",
+      "display_name": "Incomplete Elimination",
+      "description": "Student moves the boundary by 1 (left++ or right--) instead of eliminating mid entirely (left=mid+1 or right=mid-1)",
+      "observable_patterns": [
+        "Uses left++ instead of left=mid+1",
+        "Uses right-- instead of right=mid-1",
+        "Explains moving the pointer 'by one' without justifying why mid is eliminated",
+        "Code shows left = left + 1 or right = right - 1 in the branch"
+      ],
+      "invariant": "When nums[mid] < target, all indices 0..mid are provably impossible. Therefore left must jump past mid entirely: left = mid + 1",
+      "severity": "foundational",
+      "socratic_angles": [
+        {
+          "id": "ELIMINATED_RANGE_PROOF",
+          "description": "Ask which indices are provably eliminated when nums[mid] < target",
+          "sample_question": "If nums[mid] is smaller than the target, which indices can you prove can no longer contain the target — including mid itself?"
+        },
+        {
+          "id": "COUNTEREXAMPLE",
+          "description": "Show a concrete array where left++ skips the target",
+          "sample_question": "Given array [2, 5, 8, 12, 16, 23, 38], left=0, right=6, mid=3, nums[3]=12, target=23: if you use left++, what is the new search space? Can it still find 23?"
+        },
+        {
+          "id": "INVARIANT_RESTATEMENT",
+          "description": "Ask the student to state the invariant the search must maintain",
+          "sample_question": "What property must always be true about the remaining search interval [left, right] at the start of every iteration?"
+        },
+        {
+          "id": "OPPOSITE_BRANCH_TRANSFER",
+          "description": "Apply the same reasoning to the right boundary",
+          "sample_question": "Using the same elimination logic: when nums[mid] > target, which indices are now provably impossible? What should right become?"
+        }
+      ],
+      "transfer_templates": [
+        {
+          "id": "TRANSFER_BS_1",
+          "array": [2, 5, 8, 12, 16, 23, 38],
+          "left": 0,
+          "right": 6,
+          "mid": 3,
+          "nums_mid": 12,
+          "target": 23,
+          "question": "Array: [2, 5, 8, 12, 16, 23, 38]\nleft=0, right=6, mid=3, nums[mid]=12, target=23\n\nWhich index range can still contain the target?\nWhat should the next left boundary be, and why?",
+          "target_reasoning": "Since nums[3]=12 < 23, all indices 0..3 are impossible. Therefore left=mid+1=4. The range [4,6] remains."
+        },
+        {
+          "id": "TRANSFER_BS_2",
+          "array": [1, 3, 7, 15, 21, 40, 55, 72],
+          "left": 0,
+          "right": 7,
+          "mid": 3,
+          "nums_mid": 15,
+          "target": 55,
+          "question": "Array: [1, 3, 7, 15, 21, 40, 55, 72]\nleft=0, right=7, mid=3, nums[mid]=15, target=55\n\nWhich indices are definitively eliminated?\nWhat should left become, and why?",
+          "target_reasoning": "Since nums[3]=15 < 55, all indices 0..3 are impossible. Therefore left=mid+1=4. The search continues in [4,7]."
+        },
+        {
+          "id": "TRANSFER_BS_3",
+          "array": [10, 20, 30, 40, 50],
+          "left": 2,
+          "right": 4,
+          "mid": 3,
+          "nums_mid": 40,
+          "target": 30,
+          "question": "Array: [10, 20, 30, 40, 50]\nleft=2, right=4, mid=3, nums[mid]=40, target=30\n\nnums[mid] > target here. Which indices are eliminated?\nWhat should right become, and why?",
+          "target_reasoning": "Since nums[3]=40 > 30, all indices 3..4 are impossible. Therefore right=mid-1=2. The search continues in [2,2]."
+        }
+      ]
+    },
+    {
+      "id": "M2_INCORRECT_LOOP_CONDITION",
+      "display_name": "Incorrect Loop Condition",
+      "description": "Student uses wrong loop termination condition (e.g., left < right instead of left <= right for standard search, or vice versa for boundary search)",
+      "observable_patterns": [
+        "Uses while left < right for standard binary search",
+        "Uses while left <= right for first/last occurrence search",
+        "Loop terminates prematurely, missing single-element arrays",
+        "Off-by-one in loop condition"
+      ],
+      "invariant": "For standard binary search: loop continues while [left, right] is non-empty (left <= right). For boundary search: loop continues while search space has > 1 element (left < right).",
+      "severity": "moderate",
+      "socratic_angles": [
+        {
+          "id": "EDGE_CASE",
+          "description": "Ask what happens with a single-element array",
+          "sample_question": "Consider an array with a single element [5] and target=5. With left=0, right=0: does your loop condition left < right execute? What would happen?"
+        },
+        {
+          "id": "LOOP_TERMINATION",
+          "description": "Ask when the loop should terminate",
+          "sample_question": "At what point is the search interval [left, right] 'empty'? When left=5 and right=4, what does that mean geometrically?"
+        },
+        {
+          "id": "COUNTEREXAMPLE",
+          "description": "Show where the wrong condition misses a valid answer",
+          "sample_question": "With array [3, 7] and target=7: initial left=0, right=1, mid=0, nums[0]=3 < 7. You set left=1. Now left=1, right=1. Does while left < right continue?"
+        }
+      ],
+      "transfer_templates": [
+        {
+          "id": "TRANSFER_LC_1",
+          "array": [4],
+          "left": 0,
+          "right": 0,
+          "target": 4,
+          "question": "Array: [4]\nleft=0, right=0, target=4\n\nWith condition 'while left < right': does the loop run? Is the target found?\nWith condition 'while left <= right': what happens?",
+          "target_reasoning": "With left < right: loop doesn't run (0 < 0 is false), target not found — incorrect. With left <= right: loop runs once, mid=0, nums[0]=4=target, found."
+        }
+      ]
+    },
+    {
+      "id": "M3_INCORRECT_MID_UPDATE",
+      "display_name": "Incorrect Mid Calculation",
+      "description": "Student calculates mid incorrectly, causing overflow or wrong midpoint",
+      "observable_patterns": [
+        "Uses mid = (left + right) / 2 which can overflow for large integers",
+        "Uses mid = left + right / 2 (wrong operator precedence)",
+        "Uses mid = (left + right + 1) / 2 incorrectly"
+      ],
+      "invariant": "Mid must be calculated as: mid = left + (right - left) / 2 to avoid integer overflow. For upper-mid: mid = left + (right - left + 1) / 2.",
+      "severity": "surface",
+      "socratic_angles": [
+        {
+          "id": "COUNTEREXAMPLE",
+          "description": "Ask about overflow with large values",
+          "sample_question": "If left = 1,000,000,000 and right = 2,000,000,000, what happens to left + right in a 32-bit integer?"
+        },
+        {
+          "id": "INVARIANT_RESTATEMENT",
+          "description": "Ask for safe midpoint formula",
+          "sample_question": "How can you compute the midpoint of [left, right] without risk of overflow? Express it only using subtraction from left."
+        }
+      ],
+      "transfer_templates": [
+        {
+          "id": "TRANSFER_MID_1",
+          "question": "left = 1073741823, right = 2147483646 (both valid 32-bit int values)\n\nCompute left + right. Does it fit in a 32-bit signed integer (max: 2147483647)?\nWhat is the correct overflow-safe formula for mid?",
+          "target_reasoning": "left + right = 3221225469 which overflows 32-bit int. Safe formula: mid = left + (right - left) / 2 = 1073741823 + 536870911 = 1610612734."
+        }
+      ]
+    },
+    {
+      "id": "M4_INCORRECT_FIRST_OCCURRENCE_LOGIC",
+      "display_name": "Incorrect First Occurrence Logic",
+      "description": "Student updates boundaries incorrectly when searching for the first (leftmost) occurrence",
+      "observable_patterns": [
+        "Returns immediately on finding target instead of recording and continuing left",
+        "Moves left boundary past mid when target found (should move right boundary)",
+        "Misses the greedy 'keep looking left' pattern"
+      ],
+      "invariant": "When nums[mid] == target and finding first occurrence: record mid as candidate answer, then narrow right to mid-1 to keep looking for an earlier occurrence.",
+      "severity": "moderate",
+      "socratic_angles": [
+        {
+          "id": "COUNTEREXAMPLE",
+          "description": "Show array with duplicates where early return fails",
+          "sample_question": "Array: [1, 3, 3, 3, 5], target=3. If you return immediately when nums[2]=3, you'd return index 2. But index 1 also contains 3. How do you ensure you find index 1?"
+        },
+        {
+          "id": "INVARIANT_RESTATEMENT",
+          "description": "Ask what the invariant for first occurrence search is",
+          "sample_question": "In first-occurrence search, what is the invariant? When you find nums[mid]=target, can you be sure there's no earlier occurrence?"
+        }
+      ],
+      "transfer_templates": [
+        {
+          "id": "TRANSFER_FO_1",
+          "array": [2, 4, 4, 4, 8, 10],
+          "target": 4,
+          "question": "Array: [2, 4, 4, 4, 8, 10], target=4\nleft=0, right=5, mid=2, nums[2]=4 (target found!)\n\nShould you return 2 immediately? Why or why not?\nWhat should left and right become to find the FIRST occurrence?",
+          "target_reasoning": "Don't return immediately — record index 2, then set right=mid-1=1 to look left. Continue until left>right, then return recorded answer."
+        }
+      ]
+    },
+    {
+      "id": "M5_INCORRECT_LAST_OCCURRENCE_LOGIC",
+      "display_name": "Incorrect Last Occurrence Logic",
+      "description": "Student updates boundaries incorrectly when searching for the last (rightmost) occurrence",
+      "observable_patterns": [
+        "Returns immediately on finding target instead of recording and continuing right",
+        "Moves right boundary to mid when target found (should move left boundary to mid+1)"
+      ],
+      "invariant": "When nums[mid] == target and finding last occurrence: record mid, then set left=mid+1 to keep looking for a later occurrence.",
+      "severity": "moderate",
+      "socratic_angles": [
+        {
+          "id": "COUNTEREXAMPLE",
+          "description": "Show array where early return misses later occurrence",
+          "sample_question": "Array: [1, 3, 3, 3, 5], target=3. Mid=2, nums[2]=3. If you return 2, you miss that index 3 also contains 3. How should the boundary update to search right?"
+        }
+      ],
+      "transfer_templates": [
+        {
+          "id": "TRANSFER_LO_1",
+          "array": [2, 4, 4, 4, 8, 10],
+          "target": 4,
+          "question": "Array: [2, 4, 4, 4, 8, 10], target=4\nYou want the LAST occurrence.\nleft=0, right=5, mid=2, nums[2]=4 (target found!)\n\nShould you return 2? What should left become to keep searching right?",
+          "target_reasoning": "Record 2, set left=mid+1=3. Continue: left=3, right=5, mid=4, nums[4]=8≠4, right=3. left=3, right=3, mid=3, nums[3]=4, record 3, left=4. left>right, return 3."
+        }
+      ]
+    },
+    {
+      "id": "M6_CONFUSION_ABOUT_SEARCH_INVARIANT",
+      "display_name": "Confusion About Search Invariant",
+      "description": "Student does not understand the invariant that binary search maintains throughout execution",
+      "observable_patterns": [
+        "Cannot explain why the target must be in [left, right]",
+        "Arbitrarily adjusts boundaries without justification",
+        "Confuses which property is being maintained"
+      ],
+      "invariant": "Binary search invariant: if the target exists in the array, it must be within [left, right] at the start of every iteration. Every boundary update must preserve this invariant.",
+      "severity": "foundational",
+      "socratic_angles": [
+        {
+          "id": "INVARIANT_RESTATEMENT",
+          "description": "Ask the student to state the invariant",
+          "sample_question": "What property must always hold about [left, right] at the start of every iteration? If target=23 exists, where must it be?"
+        },
+        {
+          "id": "ELIMINATED_RANGE_PROOF",
+          "description": "Ask for proof that eliminated range is safe to remove",
+          "sample_question": "Before you set left=mid+1, you need to prove this is safe. What fact about nums[0..mid] lets you eliminate it entirely?"
+        }
+      ],
+      "transfer_templates": [
+        {
+          "id": "TRANSFER_INV_1",
+          "array": [3, 6, 9, 12, 15, 18, 21],
+          "target": 15,
+          "question": "Array: [3, 6, 9, 12, 15, 18, 21], target=15\nIteration 1: left=0, right=6, mid=3, nums[3]=12\n\nState the invariant: where must target=15 be before this iteration?\nAfter seeing nums[3]=12 < 15, state the invariant for the NEXT iteration. What can you prove?",
+          "target_reasoning": "Before: target must be in [0,6] (whole array). After: nums[3]=12<15, so indices 0..3 are impossible. Target must be in [4,6]. Invariant preserved with left=4."
+        }
+      ]
+    },
+    {
+      "id": "M7_INCORRECT_ROTATED_ARRAY_REASONING",
+      "display_name": "Incorrect Rotated Array Reasoning",
+      "description": "Student cannot correctly identify which half of a rotated sorted array is guaranteed sorted",
+      "observable_patterns": [
+        "Does not check which side is sorted before narrowing search",
+        "Incorrectly assumes target must be in the non-sorted half",
+        "Applies standard binary search without accounting for rotation"
+      ],
+      "invariant": "In a rotated array: exactly one of [left, mid] or [mid, right] is guaranteed to be sorted. Check which is sorted, then determine if target falls in that sorted range.",
+      "severity": "moderate",
+      "socratic_angles": [
+        {
+          "id": "INVARIANT_RESTATEMENT",
+          "description": "Ask which half is sorted",
+          "sample_question": "For rotated array [6, 7, 0, 1, 2, 3, 4], left=0, right=6, mid=3, nums[mid]=1: is [left..mid] or [mid..right] guaranteed sorted? How can you tell?"
+        },
+        {
+          "id": "COUNTEREXAMPLE",
+          "description": "Show where wrong half choice leads to missing target",
+          "sample_question": "Array [4, 5, 6, 7, 0, 1, 2], target=0, mid=3, nums[3]=7. Left half [4,5,6,7] is sorted and target=0 is NOT in [4,7]. So where must target be?"
+        }
+      ],
+      "transfer_templates": [
+        {
+          "id": "TRANSFER_ROT_1",
+          "array": [5, 6, 7, 1, 2, 3, 4],
+          "target": 3,
+          "question": "Array: [5, 6, 7, 1, 2, 3, 4], target=3\nleft=0, right=6, mid=3, nums[3]=1\n\nWhich half ([left..mid] or [mid..right]) is guaranteed sorted?\nIs target=3 in the sorted range? What should the boundaries become?",
+          "target_reasoning": "nums[left]=5, nums[mid]=1: left half [5,6,7,1] is NOT sorted (5>1). Right half [1,2,3,4] IS sorted. Target=3 is in [1,4], so search right half: left=mid+1=4."
+        }
+      ]
+    }
+  ]
+}

@@ -119,9 +119,10 @@ try:
     import sqlite_vec
     db = sqlite3.connect(":memory:")
     db.enable_load_extension(True); sqlite_vec.load(db); db.enable_load_extension(False)
-    line(OK, f"sqlite-vec {db.execute('select vec_version()').fetchone()[0]} loads")
-except Exception as e:
-    line(BAD, "sqlite-vec will not load", str(e)[:160])
+    line(OK, f"sqlite-vec {db.execute('select vec_version()').fetchone()[0]} loads (optional)")
+except Exception:
+    line(WARN, "sqlite-vec not installed (optional - not needed for core DSA tutor)")
+
 
 # 5 --------------------------------------------------------------------------
 try:

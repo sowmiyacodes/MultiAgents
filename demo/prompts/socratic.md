@@ -33,11 +33,12 @@ is greater than target.
 
 Rules:
 
+- Guide the student using questions.
 - Ask only one main question.
-- Do not reveal the corrected code.
+- Do not immediately reveal the answer or corrected code.
 - Do not say "the correct answer is".
-- Do not use a leading question that directly gives away mid + 1 or
-  mid - 1.
+- Do not use a leading question that directly gives away mid + 1 or mid - 1.
+- Provide a subtle progressive hint in the "hint" field if context warrants it.
 - Focus on reasoning, not syntax.
 
 Return only the requested structured output.

@@ -56,13 +56,26 @@ class DiagnosticAgent:
             },
         ]
 
-        return self.call(
-            settings=ctx.settings,
-            budget=ctx.budget,
-            messages=messages,
-            schema=DiagnosticResult,
-            step="diagnostic",
-        )
+        try:
+            return self.call(
+                settings=ctx.settings,
+                budget=ctx.budget,
+                messages=messages,
+                schema=DiagnosticResult,
+                step="diagnostic",
+            )
+        except Exception:
+            from llm.fallback import diagnose as fallback_diagnose
+            fb = fallback_diagnose(student_attempt, topic="binary_search")
+            return DiagnosticResult(
+                misconception=fb.misconception_id,
+                confidence=fb.confidence,
+                reasoning_pattern=fb.invariant,
+                evidence=fb.evidence,
+                concept="boundary_elimination",
+                target_reasoning=fb.invariant,
+            )
+
 
 
 class SocraticAgent:
@@ -111,13 +124,30 @@ class SocraticAgent:
             },
         ]
 
-        return self.call(
-            settings=ctx.settings,
-            budget=ctx.budget,
-            messages=messages,
-            schema=SocraticQuestion,
-            step="socratic",
-        )
+        try:
+            return self.call(
+                settings=ctx.settings,
+                budget=ctx.budget,
+                messages=messages,
+                schema=SocraticQuestion,
+                step="socratic",
+            )
+        except Exception:
+            from llm.fallback import socratic_question as fallback_socratic
+            angle_id = angle.get("id", "ELIMINATED_RANGE_PROOF") if isinstance(angle, dict) else "ELIMINATED_RANGE_PROOF"
+            misc_id = diagnostic.get("misconception", "M1_INCOMPLETE_ELIMINATION") if isinstance(diagnostic, dict) else "M1_INCOMPLETE_ELIMINATION"
+            fb = fallback_socratic(
+                misconception_id=misc_id,
+                angle_id=angle_id,
+                topic="binary_search",
+                used_questions=[],
+            )
+            return SocraticQuestion(
+                question=fb.question,
+                pedagogical_goal=fb.hint,
+                angle_id=angle_id,
+            )
+
 
 
 class EvaluatorAgent:
@@ -163,13 +193,36 @@ class EvaluatorAgent:
             },
         ]
 
-        return self.call(
-            settings=ctx.settings,
-            budget=ctx.budget,
-            messages=messages,
-            schema=EvaluationResult,
-            step="evaluator",
-        )
+        try:
+            return self.call(
+                settings=ctx.settings,
+                budget=ctx.budget,
+                messages=messages,
+                schema=EvaluationResult,
+                step="evaluator",
+            )
+        except Exception:
+            from llm.fallback import evaluate as fallback_evaluate
+            misc_id = diagnostic.get("misconception", "M1_INCOMPLETE_ELIMINATION") if isinstance(diagnostic, dict) else "M1_INCOMPLETE_ELIMINATION"
+            inv = diagnostic.get("reasoning_pattern", "When nums[mid] < target, all indices 0..mid are ruled out; left = mid + 1") if isinstance(diagnostic, dict) else "When nums[mid] < target, all indices 0..mid are ruled out; left = mid + 1"
+            q_text = question.get("question", "") if isinstance(question, dict) else str(question)
+            fb = fallback_evaluate(
+                student_response=student_response,
+                misconception_id=misc_id,
+                topic="binary_search",
+                stage=stage,
+                target_reasoning=inv,
+                invariant=inv,
+                question_or_task=q_text,
+            )
+            outcome_str = "PASS" if (fb.result.value == "PASS" and fb.reasoning_correct) else "REINFORCE"
+            return EvaluationResult(
+                outcome=outcome_str,
+                reasoning_correct=fb.reasoning_correct,
+                transfer_success=fb.transfer_success,
+                evidence=fb.evidence,
+                misconception_recurred=fb.misconception_recurred,
+            )
 
 
 class TransferAgent:
@@ -204,13 +257,31 @@ class TransferAgent:
             },
         ]
 
-        return self.call(
-            settings=ctx.settings,
-            budget=ctx.budget,
-            messages=messages,
-            schema=TransferTask,
-            step="transfer",
-        )
+        try:
+            return self.call(
+                settings=ctx.settings,
+                budget=ctx.budget,
+                messages=messages,
+                schema=TransferTask,
+                step="transfer",
+            )
+        except Exception:
+            from llm.fallback import transfer_task as fallback_transfer
+            misc_id = diagnostic.get("misconception", "M1_INCOMPLETE_ELIMINATION") if isinstance(diagnostic, dict) else "M1_INCOMPLETE_ELIMINATION"
+            fb = fallback_transfer(
+                misconception_id=misc_id,
+                topic="binary_search",
+                subconcept="boundary_update",
+                target_reasoning="When nums[mid] < target, indices 0..mid are impossible, so left = mid + 1",
+                original_example="left++",
+                previous_tasks=[],
+            )
+            return TransferTask(
+                task_id=fb.task_id,
+                prompt=fb.problem,
+                target_reasoning=fb.target_reasoning,
+            )
+
 
 
 class PlannerAgent:
@@ -434,4 +505,8 @@ class TutorAgentR8:
                         angle_id=res.angle_id,
                         difficulty=planner_decision.difficulty,
                     )
-            raise
+            raise
+
+
+TutorAgent = TutorAgentR8
+

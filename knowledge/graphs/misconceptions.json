@@ -1,0 +1,43 @@
+{
+  "topic": "graphs",
+  "misconceptions": [
+    {
+      "id": "BFS_VISITED_WRONG_TIME",
+      "display_name": "Marking Visited at Wrong Time",
+      "description": "Student marks nodes as visited when DEQUEUING instead of when ENQUEUING, causing duplicates",
+      "observable_patterns": [
+        "Marks visited inside while loop after dequeue",
+        "Same node enqueued multiple times before processing"
+      ],
+      "invariant": "Mark a node visited WHEN YOU ENQUEUE IT, not when you dequeue it. This prevents the same node being added to the queue multiple times.",
+      "severity": "foundational",
+      "socratic_angles": ["COUNTEREXAMPLE", "INVARIANT_RESTATEMENT", "TRACE_THROUGH"],
+      "transfer_templates": [
+        {
+          "id": "TRANSFER_BFS_1",
+          "question": "Graph: 0-1, 0-2, 1-2 (triangle). BFS from 0.\nIf you mark visited when DEQUEUING:\n- Queue: [0]\n- Dequeue 0, enqueue 1, 2. Queue: [1, 2]\n- Dequeue 1, enqueue 2 (not marked yet!). Queue: [2, 2]\nWhat happens? How does marking when ENQUEUING fix this?",
+          "target_reasoning": "Node 2 is enqueued twice. If marked visited when enqueued: after enqueueing 2 from node 0, it's marked visited. When processing node 1, 2 is already visited — skip."
+        }
+      ]
+    },
+    {
+      "id": "DFS_MISSING_VISITED",
+      "display_name": "Missing Visited Tracking",
+      "description": "Student omits visited tracking in DFS, causing infinite loops on cyclic graphs",
+      "observable_patterns": [
+        "DFS without a visited set or boolean array",
+        "Revisits already-explored nodes"
+      ],
+      "invariant": "Every DFS on a graph (not tree) must track visited nodes to avoid infinite loops on cycles.",
+      "severity": "foundational",
+      "socratic_angles": ["COUNTEREXAMPLE", "EDGE_CASE", "INVARIANT_RESTATEMENT"],
+      "transfer_templates": [
+        {
+          "id": "TRANSFER_DFS_1",
+          "question": "Graph: 0-1, 1-2, 2-0 (cycle). DFS from 0 without visited tracking.\nTrace the execution. Does it terminate?",
+          "target_reasoning": "Without visited: 0→1→2→0→1→2→... infinite loop. With visited set: mark 0, go to 1, mark 1, go to 2, mark 2, try 0 (visited), backtrack. Terminates."
+        }
+      ]
+    }
+  ]
+}

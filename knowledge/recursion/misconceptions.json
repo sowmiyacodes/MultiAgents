@@ -1,0 +1,25 @@
+{
+  "topic": "recursion",
+  "misconceptions": [
+    {
+      "id": "RECURSION_MISSING_BASE_CASE",
+      "display_name": "Missing Base Case",
+      "description": "Student writes recursive function without a proper base case, causing infinite recursion",
+      "observable_patterns": [
+        "Function recurses without any termination condition",
+        "Base case exists but is wrong (e.g., if n == 0 when n can go negative)",
+        "Stack overflow error in practice"
+      ],
+      "invariant": "Every recursive function must have at least one base case that returns without recursing. Every recursive call must make progress toward the base case.",
+      "severity": "foundational",
+      "socratic_angles": ["EDGE_CASE", "TRACE_THROUGH", "INVARIANT_RESTATEMENT"],
+      "transfer_templates": [
+        {
+          "id": "TRANSFER_REC_1",
+          "question": "Student's factorial:\ndef factorial(n):\n    return n * factorial(n-1)\n\nTrace factorial(3). Does it terminate?",
+          "target_reasoning": "3*factorial(2) → 2*factorial(1) → 1*factorial(0) → 0*factorial(-1) → ... infinite. Fix: if n == 0: return 1 (base case)."
+        }
+      ]
+    }
+  ]
+}

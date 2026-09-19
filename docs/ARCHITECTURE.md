@@ -181,7 +181,7 @@ Not "the model said X" but "X — from `notes.md#3`, quoting this passage."
 | | |
 |---|---|
 | `slice/retrieve.py:42` · `Chunk` | Text **and** where it came from |
-| `slice/retrieve.py:51` · `Chunk.cite` | The string an evidence row carries — and what the check compares against |
+| `slice/retrieve.py:47` · `Chunk.cite` | The string an evidence row carries — and what the check compares against |
 | `slice/retrieve.py:88` · `ingest` | Chunk, embed locally, store — idempotent via content hashing |
 | `slice/retrieve.py:118` · `search` | Returns the chunks it actually found — the set a citation has to be checked against |
 
@@ -272,7 +272,7 @@ decisions, because every interesting failure is in the middle steps.
 | | |
 |---|---|
 | `slice/llm.py:90` · `_Span` | One span per call |
-| `slice/config.py:44` · `Settings.tracing_enabled` | Off unless configured |
+| `slice/config.py:48` · `Settings.tracing_enabled` | Off unless configured |
 
 **Tracing no-ops when Langfuse is not set up**, and that is deliberate: no team
 should be blocked at hour zero by an observability signup. Add it at hour four.

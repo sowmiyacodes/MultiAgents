@@ -39,6 +39,10 @@ class Settings:
     langfuse_public: str
     langfuse_secret: str
     langfuse_host: str
+    max_socratic_attempts: int = 3
+    max_agent_calls_per_run: int = 30
+    database_path: str = "run.db"
+
 
     @property
     def tracing_enabled(self) -> bool:
@@ -50,15 +54,20 @@ def settings(reload: bool = True) -> Settings:
         load_env()
     g = os.environ.get
     return Settings(
-        api_key               = g("OPENROUTER_API_KEY", "").strip(),
-        model                 = g("SLICE_MODEL", "inclusionai/ling-3.0-flash").strip(),
-        fallback_model        = g("SLICE_FALLBACK_MODEL", "mistralai/mistral-small-3.2-24b-instruct").strip(),
-        escalation_model      = g("SLICE_ESCALATION_MODEL", "anthropic/claude-haiku-4.5").strip(),
-        max_tokens            = int(g("SLICE_MAX_TOKENS", "1200")),
-        max_tokens_per_run    = int(g("SLICE_MAX_TOKENS_PER_RUN", "250000")),
-        max_attempts_per_step = int(g("SLICE_MAX_ATTEMPTS_PER_STEP", "3")),
-        expert_timeout_minutes= int(g("SLICE_EXPERT_TIMEOUT_MINUTES", "45")),
-        langfuse_public       = g("LANGFUSE_PUBLIC_KEY", "").strip(),
-        langfuse_secret       = g("LANGFUSE_SECRET_KEY", "").strip(),
-        langfuse_host         = g("LANGFUSE_HOST", "https://cloud.langfuse.com").strip(),
+        api_key                 = g("OPENROUTER_API_KEY", "").strip(),
+        model                   = (g("OPENROUTER_MODEL") or g("SLICE_MODEL") or "openai/gpt-4o-mini").strip(),
+        fallback_model          = (g("OPENROUTER_FALLBACK_MODEL") or g("SLICE_FALLBACK_MODEL") or "mistralai/mistral-small-3.2-24b-instruct").strip(),
+        escalation_model        = (g("OPENROUTER_ESCALATION_MODEL") or g("SLICE_ESCALATION_MODEL") or "anthropic/claude-3.5-haiku").strip(),
+        max_tokens              = int(g("MAX_TOKENS_PER_RESPONSE") or g("SLICE_MAX_TOKENS") or "1200"),
+        max_tokens_per_run      = int(g("MAX_TOKENS_PER_RUN") or g("SLICE_MAX_TOKENS_PER_RUN") or "250000"),
+        max_attempts_per_step   = int(g("SLICE_MAX_ATTEMPTS_PER_STEP", "3")),
+        expert_timeout_minutes  = int(g("SLICE_EXPERT_TIMEOUT_MINUTES", "45")),
+        langfuse_public         = g("LANGFUSE_PUBLIC_KEY", "").strip(),
+        langfuse_secret         = g("LANGFUSE_SECRET_KEY", "").strip(),
+        langfuse_host           = g("LANGFUSE_HOST", "https://cloud.langfuse.com").strip(),
+        max_socratic_attempts   = int(g("MAX_SOCRATIC_ATTEMPTS", "3")),
+        max_agent_calls_per_run = int(g("MAX_AGENT_CALLS_PER_RUN", "30")),
+        database_path           = g("DATABASE_PATH", "run.db").strip(),
     )
+
+

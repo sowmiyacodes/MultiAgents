@@ -1,0 +1,25 @@
+{
+  "topic": "trees",
+  "misconceptions": [
+    {
+      "id": "TREE_HEIGHT_DEPTH_CONFUSION",
+      "display_name": "Confusing Height and Depth",
+      "description": "Student confuses tree height (from node to farthest leaf) with node depth (from root to node)",
+      "observable_patterns": [
+        "Computes height as distance from root",
+        "Uses depth formula for height computation",
+        "Returns depth of node when height is asked"
+      ],
+      "invariant": "Depth of a node = distance from root to node. Height of a node = distance from node to its deepest descendant. Height of tree = height of root.",
+      "severity": "surface",
+      "socratic_angles": ["INVARIANT_RESTATEMENT", "COUNTEREXAMPLE", "EDGE_CASE"],
+      "transfer_templates": [
+        {
+          "id": "TRANSFER_TREE_1",
+          "question": "Tree:    1\n        / \\\n       2   3\n      /\n     4\n\nWhat is the depth of node 4? What is the height of node 2? What is the height of the tree?",
+          "target_reasoning": "Depth of 4 = 2 (root→2→4). Height of 2 = 1 (2→4). Height of tree = height of root = 2 (1→2→4)."
+        }
+      ]
+    }
+  ]
+}

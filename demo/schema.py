@@ -40,6 +40,21 @@ class DiagnosticResult(BaseModel):
         description="Description of the student's reasoning pattern."
     )
 
+    knowledge_level: str = Field(
+        default="foundational",
+        description="Identified student knowledge level (e.g., beginner, foundational, intermediate).",
+    )
+
+    weak_concepts: list[str] = Field(
+        default_factory=list,
+        description="Detected weak concepts or prerequisites in student reasoning.",
+    )
+
+    next_diagnostic_focus: str = Field(
+        default="boundary_elimination",
+        description="Next concept or invariant that needs to be diagnosed.",
+    )
+
 
 class SocraticQuestion(BaseModel):
     angle_id: str = Field(
@@ -53,6 +68,12 @@ class SocraticQuestion(BaseModel):
     pedagogical_goal: str = Field(
         description="What reasoning the question is intended to elicit."
     )
+
+    hint: str | None = Field(
+        default=None,
+        description="Progressive hint when necessary to guide the student without revealing the answer.",
+    )
+
 
 
 class StudentResponse(BaseModel):
@@ -186,4 +207,4 @@ class TutorResponse(BaseModel):
     difficulty: str = Field(
         default="medium",
         description="Difficulty level of the question or task."
-    )
+    )

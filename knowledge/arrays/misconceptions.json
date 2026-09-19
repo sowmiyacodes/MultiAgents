@@ -1,0 +1,64 @@
+{
+  "topic": "arrays",
+  "misconceptions": [
+    {
+      "id": "ARRAY_OFF_BY_ONE",
+      "display_name": "Off-By-One Boundary Error",
+      "description": "Student accesses index N instead of N-1, or starts loop at 1 instead of 0",
+      "observable_patterns": [
+        "Loop condition uses i <= arr.length instead of i < arr.length",
+        "Accesses arr[n] which is out of bounds",
+        "Prefix sum array of size n instead of n+1"
+      ],
+      "invariant": "Valid indices are 0..n-1. Loop i < n ensures i never reaches n.",
+      "severity": "moderate",
+      "socratic_angles": ["EDGE_CASE", "COUNTEREXAMPLE", "INVARIANT_RESTATEMENT"],
+      "transfer_templates": [
+        {
+          "id": "TRANSFER_ARR_OBO_1",
+          "question": "Array: [3, 1, 4, 1, 5], n=5\nYour loop: for(int i=0; i<=5; i++)\nWhen i=5, what is arr[5]? What happens?",
+          "target_reasoning": "arr[5] is out of bounds — valid indices are 0..4. Fix: i < 5 (or i < n)."
+        }
+      ]
+    },
+    {
+      "id": "SLIDING_WINDOW_PREMATURE_SHRINK",
+      "display_name": "Premature Window Shrink",
+      "description": "Student shrinks the sliding window before the invariant is violated",
+      "observable_patterns": [
+        "Shrinks window on every iteration instead of only when invariant fails",
+        "Uses fixed window logic for variable-window problems"
+      ],
+      "invariant": "Shrink the window only when the window violates the required property.",
+      "severity": "foundational",
+      "socratic_angles": ["INVARIANT_RESTATEMENT", "COUNTEREXAMPLE", "TRACE_THROUGH"],
+      "transfer_templates": [
+        {
+          "id": "TRANSFER_SW_1",
+          "question": "Array: [2, 1, 5, 2, 3, 2], k=7 (find subarray with sum >= k)\nWindow [2,1,5] has sum=8 >= 7. Do you shrink it now? What rule tells you when to shrink?",
+          "target_reasoning": "Shrink only when current window sum < k is violated (i.e., sum >= k met, shrink to find smaller valid window). Record current window size before shrinking."
+        }
+      ]
+    },
+    {
+      "id": "TWO_POINTERS_WRONG_POINTER",
+      "display_name": "Moving Wrong Pointer",
+      "description": "Student moves the wrong pointer in a two-pointer approach",
+      "observable_patterns": [
+        "Moves left pointer when result is too small (should move right)",
+        "Moves right pointer when sum is too large (should move left)",
+        "Moves both pointers at once"
+      ],
+      "invariant": "If current value < target: move the pointer that increases the value. If current value > target: move the pointer that decreases the value.",
+      "severity": "moderate",
+      "socratic_angles": ["INVARIANT_RESTATEMENT", "COUNTEREXAMPLE", "TRACE_THROUGH"],
+      "transfer_templates": [
+        {
+          "id": "TRANSFER_TP_1",
+          "question": "Sorted array: [1, 3, 5, 7, 9], target sum=10\nleft=0 (value=1), right=4 (value=9), sum=10. What do you do?\nNow left=0 (value=1), right=3 (value=7), sum=8 < 10. Which pointer moves and why?",
+          "target_reasoning": "sum=8 < 10: need to increase sum. Move left pointer right: left++. Moving right-- would decrease sum further."
+        }
+      ]
+    }
+  ]
+}

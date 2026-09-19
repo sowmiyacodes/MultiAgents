@@ -1,0 +1,429 @@
+{
+  "version": "1.0",
+  "description": "DSA Knowledge Registry — maps topics to misconceptions, invariants, Socratic angles, and transfer templates",
+  "topics": [
+    {
+      "domain": "binary_search",
+      "topic": "binary_search",
+      "display_name": "Binary Search",
+      "subconcepts": ["standard", "boundary_update", "loop_condition", "first_occurrence", "last_occurrence", "search_space", "invariant", "rotated_array"],
+      "difficulty": "medium",
+      "prerequisites": ["arrays", "sorting"],
+      "misconceptions_file": "binary_search/misconceptions.json",
+      "rubric_file": "binary_search/rubric.json",
+      "key_invariants": [
+        "Every eliminated index is provably impossible to contain the target",
+        "The search interval always contains the target if it exists",
+        "Loop terminates when left > right (for standard search)"
+      ],
+      "socratic_angles": [
+        "ELIMINATED_RANGE_PROOF",
+        "COUNTEREXAMPLE",
+        "INVARIANT_RESTATEMENT",
+        "OPPOSITE_BRANCH_TRANSFER",
+        "EDGE_CASE",
+        "LOOP_TERMINATION"
+      ],
+      "evaluation_criteria": {
+        "mastery_requires_transfer": true,
+        "transfer_count_for_mastery": 1,
+        "requires_reasoning_not_just_answer": true
+      }
+    },
+    {
+      "domain": "arrays",
+      "topic": "arrays",
+      "display_name": "Arrays",
+      "subconcepts": ["traversal", "insertion_deletion", "prefix_sum", "sliding_window", "two_pointers", "kadane", "subarray"],
+      "difficulty": "easy",
+      "prerequisites": [],
+      "misconceptions_file": "arrays/misconceptions.json",
+      "rubric_file": null,
+      "key_invariants": [
+        "Array indices are 0-based",
+        "Sliding window maintains a valid window of elements",
+        "Two pointers converge without crossing unnecessarily"
+      ],
+      "socratic_angles": [
+        "BOUNDARY_CHECK",
+        "INVARIANT_RESTATEMENT",
+        "COUNTEREXAMPLE",
+        "EDGE_CASE"
+      ],
+      "evaluation_criteria": {
+        "mastery_requires_transfer": true,
+        "transfer_count_for_mastery": 1,
+        "requires_reasoning_not_just_answer": true
+      }
+    },
+    {
+      "domain": "strings",
+      "topic": "strings",
+      "display_name": "Strings",
+      "subconcepts": ["character_frequency", "palindrome", "anagram", "substring", "pattern_matching"],
+      "difficulty": "easy",
+      "prerequisites": ["arrays"],
+      "misconceptions_file": "strings/misconceptions.json",
+      "rubric_file": null,
+      "key_invariants": [
+        "Character frequency maps count each character exactly once",
+        "Palindrome check requires symmetric comparison"
+      ],
+      "socratic_angles": ["COUNTEREXAMPLE", "INVARIANT_RESTATEMENT", "EDGE_CASE"],
+      "evaluation_criteria": {
+        "mastery_requires_transfer": true,
+        "transfer_count_for_mastery": 1,
+        "requires_reasoning_not_just_answer": false
+      }
+    },
+    {
+      "domain": "hashing",
+      "topic": "hashing",
+      "display_name": "Hashing",
+      "subconcepts": ["hash_map", "hash_set", "frequency_counting", "duplicate_detection", "two_sum", "lookup"],
+      "difficulty": "easy",
+      "prerequisites": ["arrays"],
+      "misconceptions_file": "hashing/misconceptions.json",
+      "rubric_file": null,
+      "key_invariants": [
+        "O(1) average lookup for hash maps",
+        "Keys must be hashable",
+        "Hash collisions are handled by the data structure"
+      ],
+      "socratic_angles": ["COMPLEXITY_ANALYSIS", "COUNTEREXAMPLE", "INVARIANT_RESTATEMENT"],
+      "evaluation_criteria": {
+        "mastery_requires_transfer": true,
+        "transfer_count_for_mastery": 1,
+        "requires_reasoning_not_just_answer": false
+      }
+    },
+    {
+      "domain": "linked_lists",
+      "topic": "linked_lists",
+      "display_name": "Linked Lists",
+      "subconcepts": ["traversal", "insertion", "deletion", "reverse", "fast_slow_pointers", "cycle_detection", "merge_sorted", "middle_node"],
+      "difficulty": "medium",
+      "prerequisites": ["arrays"],
+      "misconceptions_file": "linked_lists/misconceptions.json",
+      "rubric_file": null,
+      "key_invariants": [
+        "Fast/slow pointers meet at the cycle entry when a cycle exists",
+        "To find middle: slow moves 1, fast moves 2",
+        "Null check required before accessing next"
+      ],
+      "socratic_angles": ["INVARIANT_RESTATEMENT", "COUNTEREXAMPLE", "EDGE_CASE", "POINTER_TRACKING"],
+      "evaluation_criteria": {
+        "mastery_requires_transfer": true,
+        "transfer_count_for_mastery": 1,
+        "requires_reasoning_not_just_answer": true
+      }
+    },
+    {
+      "domain": "stacks",
+      "topic": "stacks",
+      "display_name": "Stacks",
+      "subconcepts": ["lifo", "balanced_parentheses", "monotonic_stack", "next_greater_element", "expression_evaluation"],
+      "difficulty": "medium",
+      "prerequisites": ["arrays"],
+      "misconceptions_file": "stacks/misconceptions.json",
+      "rubric_file": null,
+      "key_invariants": [
+        "LIFO: last pushed element is first popped",
+        "Monotonic stack maintains a sorted order of elements",
+        "Pop condition must be evaluated before popping"
+      ],
+      "socratic_angles": ["INVARIANT_RESTATEMENT", "COUNTEREXAMPLE", "TRACE_THROUGH"],
+      "evaluation_criteria": {
+        "mastery_requires_transfer": true,
+        "transfer_count_for_mastery": 1,
+        "requires_reasoning_not_just_answer": true
+      }
+    },
+    {
+      "domain": "queues",
+      "topic": "queues",
+      "display_name": "Queues",
+      "subconcepts": ["fifo", "circular_queue", "deque", "monotonic_queue", "bfs_queue"],
+      "difficulty": "medium",
+      "prerequisites": ["arrays"],
+      "misconceptions_file": "queues/misconceptions.json",
+      "rubric_file": null,
+      "key_invariants": [
+        "FIFO: first enqueued is first dequeued",
+        "BFS uses a queue to explore level by level",
+        "Monotonic deque removes elements that can no longer be relevant"
+      ],
+      "socratic_angles": ["INVARIANT_RESTATEMENT", "COUNTEREXAMPLE", "TRACE_THROUGH"],
+      "evaluation_criteria": {
+        "mastery_requires_transfer": true,
+        "transfer_count_for_mastery": 1,
+        "requires_reasoning_not_just_answer": false
+      }
+    },
+    {
+      "domain": "trees",
+      "topic": "trees",
+      "display_name": "Trees",
+      "subconcepts": ["binary_tree", "preorder", "inorder", "postorder", "level_order", "dfs", "bfs", "height", "depth", "diameter", "balanced"],
+      "difficulty": "medium",
+      "prerequisites": ["recursion", "queues"],
+      "misconceptions_file": "trees/misconceptions.json",
+      "rubric_file": null,
+      "key_invariants": [
+        "Tree height = max depth of any node",
+        "Inorder traversal of BST gives sorted sequence",
+        "BFS uses a queue; DFS uses a stack or recursion"
+      ],
+      "socratic_angles": ["INVARIANT_RESTATEMENT", "COUNTEREXAMPLE", "RECURSION_TRACE", "EDGE_CASE"],
+      "evaluation_criteria": {
+        "mastery_requires_transfer": true,
+        "transfer_count_for_mastery": 1,
+        "requires_reasoning_not_just_answer": true
+      }
+    },
+    {
+      "domain": "trees",
+      "topic": "binary_search_trees",
+      "display_name": "Binary Search Trees",
+      "subconcepts": ["bst_property", "search", "insertion", "deletion", "inorder_successor", "validate_bst", "lowest_common_ancestor"],
+      "difficulty": "medium",
+      "prerequisites": ["trees", "recursion"],
+      "misconceptions_file": null,
+      "rubric_file": null,
+      "key_invariants": [
+        "All nodes in left subtree < root < all nodes in right subtree",
+        "Inorder traversal yields strictly ascending order",
+        "BST property applies to all descendants, not just immediate children"
+      ],
+      "socratic_angles": ["INVARIANT_RESTATEMENT", "COUNTEREXAMPLE", "EDGE_CASE", "RECURSION_TRACE"],
+      "evaluation_criteria": {
+        "mastery_requires_transfer": true,
+        "transfer_count_for_mastery": 1,
+        "requires_reasoning_not_just_answer": true
+      }
+    },
+    {
+      "domain": "graphs",
+      "topic": "graphs",
+      "display_name": "Graphs",
+      "subconcepts": ["adjacency_list", "adjacency_matrix", "bfs", "dfs", "connected_components", "cycle_detection", "visited_tracking"],
+      "difficulty": "hard",
+      "prerequisites": ["trees", "queues", "stacks"],
+      "misconceptions_file": "graphs/misconceptions.json",
+      "rubric_file": null,
+      "key_invariants": [
+        "Visited set prevents revisiting nodes in BFS/DFS",
+        "Mark visited WHEN ENQUEUING (not dequeuing) in BFS to avoid duplicates",
+        "Directed graph cycle detection differs from undirected"
+      ],
+      "socratic_angles": ["INVARIANT_RESTATEMENT", "COUNTEREXAMPLE", "EDGE_CASE", "TRACE_THROUGH"],
+      "evaluation_criteria": {
+        "mastery_requires_transfer": true,
+        "transfer_count_for_mastery": 1,
+        "requires_reasoning_not_just_answer": true
+      }
+    },
+    {
+      "domain": "graphs",
+      "topic": "bfs",
+      "display_name": "Breadth-First Search (BFS)",
+      "subconcepts": ["queue_usage", "shortest_path_unweighted", "level_order_traversal", "multi_source_bfs", "visited_timing"],
+      "difficulty": "medium",
+      "prerequisites": ["queues", "graphs"],
+      "misconceptions_file": null,
+      "rubric_file": null,
+      "key_invariants": [
+        "BFS finds the shortest path in unweighted graphs",
+        "Nodes must be marked visited upon queue insertion to prevent redundant enqueuing",
+        "Level by level expansion guarantees earliest visit is shortest distance"
+      ],
+      "socratic_angles": ["INVARIANT_RESTATEMENT", "COUNTEREXAMPLE", "TRACE_THROUGH"],
+      "evaluation_criteria": {
+        "mastery_requires_transfer": true,
+        "transfer_count_for_mastery": 1,
+        "requires_reasoning_not_just_answer": true
+      }
+    },
+    {
+      "domain": "graphs",
+      "topic": "dfs",
+      "display_name": "Depth-First Search (DFS)",
+      "subconcepts": ["recursion_stack", "backtracking_visited", "cycle_detection_directed", "topological_sort", "connected_components"],
+      "difficulty": "medium",
+      "prerequisites": ["recursion", "graphs"],
+      "misconceptions_file": null,
+      "rubric_file": null,
+      "key_invariants": [
+        "DFS explores as deep as possible along each branch before backtracking",
+        "Three-color / recursion stack state distinguishes back-edges (cycles) from cross-edges",
+        "Unmark visited only when pathfinding/backtracking, not for reachability"
+      ],
+      "socratic_angles": ["INVARIANT_RESTATEMENT", "COUNTEREXAMPLE", "RECURSION_TRACE"],
+      "evaluation_criteria": {
+        "mastery_requires_transfer": true,
+        "transfer_count_for_mastery": 1,
+        "requires_reasoning_not_just_answer": true
+      }
+    },
+    {
+      "domain": "heaps",
+      "topic": "heaps",
+      "display_name": "Heaps / Priority Queue",
+      "subconcepts": ["min_heap", "max_heap", "priority_queue", "heapify", "kth_largest", "kth_smallest", "top_k"],
+      "difficulty": "medium",
+      "prerequisites": ["trees"],
+      "misconceptions_file": "heaps/misconceptions.json",
+      "rubric_file": null,
+      "key_invariants": [
+        "Min heap: parent <= children; Max heap: parent >= children",
+        "Heap insertion and deletion are O(log n)",
+        "Heapify builds a heap in O(n)"
+      ],
+      "socratic_angles": ["INVARIANT_RESTATEMENT", "COUNTEREXAMPLE", "COMPLEXITY_ANALYSIS"],
+      "evaluation_criteria": {
+        "mastery_requires_transfer": true,
+        "transfer_count_for_mastery": 1,
+        "requires_reasoning_not_just_answer": false
+      }
+    },
+    {
+      "domain": "recursion",
+      "topic": "recursion",
+      "display_name": "Recursion",
+      "subconcepts": ["base_case", "recursive_case", "call_stack", "recursion_tree"],
+      "difficulty": "medium",
+      "prerequisites": [],
+      "misconceptions_file": "recursion/misconceptions.json",
+      "rubric_file": null,
+      "key_invariants": [
+        "Every recursive function must have a base case",
+        "Recursive call must make progress toward the base case",
+        "Call stack depth = recursion depth"
+      ],
+      "socratic_angles": ["EDGE_CASE", "INVARIANT_RESTATEMENT", "TRACE_THROUGH", "COUNTEREXAMPLE"],
+      "evaluation_criteria": {
+        "mastery_requires_transfer": true,
+        "transfer_count_for_mastery": 1,
+        "requires_reasoning_not_just_answer": true
+      }
+    },
+    {
+      "domain": "dynamic_programming",
+      "topic": "dynamic_programming",
+      "display_name": "Dynamic Programming",
+      "subconcepts": ["state_definition", "transition", "base_cases", "1d_dp", "2d_dp", "knapsack", "lis", "lcs", "grid_dp"],
+      "difficulty": "hard",
+      "prerequisites": ["recursion", "arrays"],
+      "misconceptions_file": "dynamic_programming/misconceptions.json",
+      "rubric_file": null,
+      "key_invariants": [
+        "DP state must capture all information needed to compute future states",
+        "Transition must correctly express how current state depends on previous states",
+        "Base cases must be defined for all boundary conditions"
+      ],
+      "socratic_angles": ["INVARIANT_RESTATEMENT", "COUNTEREXAMPLE", "STATE_DEFINITION", "TRANSITION_PROOF"],
+      "evaluation_criteria": {
+        "mastery_requires_transfer": true,
+        "transfer_count_for_mastery": 1,
+        "requires_reasoning_not_just_answer": true
+      }
+    },
+    {
+      "domain": "greedy",
+      "topic": "greedy",
+      "display_name": "Greedy Algorithms",
+      "subconcepts": ["activity_selection", "interval_scheduling", "fractional_knapsack", "jump_game", "interval_merging"],
+      "difficulty": "hard",
+      "prerequisites": ["sorting"],
+      "misconceptions_file": "greedy/misconceptions.json",
+      "rubric_file": null,
+      "key_invariants": [
+        "Greedy choice must be provably locally optimal AND globally optimal",
+        "Exchange argument proves greedy validity",
+        "Greedy does NOT always produce optimal solution"
+      ],
+      "socratic_angles": ["EXCHANGE_ARGUMENT", "COUNTEREXAMPLE", "INVARIANT_RESTATEMENT"],
+      "evaluation_criteria": {
+        "mastery_requires_transfer": true,
+        "transfer_count_for_mastery": 1,
+        "requires_reasoning_not_just_answer": true
+      }
+    },
+    {
+      "domain": "sorting",
+      "topic": "sorting",
+      "display_name": "Sorting Algorithms",
+      "subconcepts": ["bubble_sort", "selection_sort", "insertion_sort", "merge_sort", "quicksort", "heap_sort", "counting_sort", "stability", "complexity"],
+      "difficulty": "medium",
+      "prerequisites": ["arrays"],
+      "misconceptions_file": "sorting/misconceptions.json",
+      "rubric_file": null,
+      "key_invariants": [
+        "Stable sort preserves relative order of equal elements",
+        "Comparison-based sorts have O(n log n) lower bound",
+        "Counting sort is O(n+k) but requires bounded integer keys"
+      ],
+      "socratic_angles": ["INVARIANT_RESTATEMENT", "COUNTEREXAMPLE", "COMPLEXITY_ANALYSIS", "STABILITY_CHECK"],
+      "evaluation_criteria": {
+        "mastery_requires_transfer": true,
+        "transfer_count_for_mastery": 1,
+        "requires_reasoning_not_just_answer": false
+      }
+    },
+    {
+      "domain": "backtracking",
+      "topic": "backtracking",
+      "display_name": "Backtracking",
+      "subconcepts": ["subsets", "permutations", "combinations", "n_queens", "constraint_search"],
+      "difficulty": "hard",
+      "prerequisites": ["recursion"],
+      "misconceptions_file": "backtracking/misconceptions.json",
+      "rubric_file": null,
+      "key_invariants": [
+        "Backtrack by undoing the last choice",
+        "Pruning avoids exploring impossible branches early",
+        "Base case captures a complete valid solution"
+      ],
+      "socratic_angles": ["TRACE_THROUGH", "COUNTEREXAMPLE", "INVARIANT_RESTATEMENT", "PRUNING_ANALYSIS"],
+      "evaluation_criteria": {
+        "mastery_requires_transfer": true,
+        "transfer_count_for_mastery": 1,
+        "requires_reasoning_not_just_answer": true
+      }
+    },
+    {
+      "domain": "advanced",
+      "topic": "advanced",
+      "display_name": "Advanced Topics",
+      "subconcepts": ["segment_tree", "fenwick_tree", "union_find", "kmp", "rabin_karp", "tarjan", "dijkstra", "bellman_ford", "topological_sort"],
+      "difficulty": "hard",
+      "prerequisites": ["graphs", "trees"],
+      "misconceptions_file": null,
+      "rubric_file": null,
+      "key_invariants": [],
+      "socratic_angles": ["INVARIANT_RESTATEMENT", "COUNTEREXAMPLE", "TRACE_THROUGH"],
+      "evaluation_criteria": {
+        "mastery_requires_transfer": false,
+        "transfer_count_for_mastery": 1,
+        "requires_reasoning_not_just_answer": false
+      }
+    }
+  ],
+  "generic_socratic_angles": {
+    "ELIMINATED_RANGE_PROOF": "Ask which elements/indices are provably eliminated and why",
+    "COUNTEREXAMPLE": "Provide a concrete case where the student's approach fails",
+    "INVARIANT_RESTATEMENT": "Ask the student to state what must remain true at each step",
+    "OPPOSITE_BRANCH_TRANSFER": "Apply the same reasoning to the opposite case",
+    "EDGE_CASE": "Ask what happens in edge cases (empty, single element, boundary)",
+    "COMPLEXITY_ANALYSIS": "Ask about time/space complexity and why",
+    "TRACE_THROUGH": "Ask the student to trace through a concrete example step by step",
+    "POINTER_TRACKING": "Ask what each pointer/variable holds at each step",
+    "STATE_DEFINITION": "Ask what the DP state represents and what it stores",
+    "TRANSITION_PROOF": "Ask why the transition formula is correct",
+    "EXCHANGE_ARGUMENT": "Ask to prove the greedy choice doesn't decrease optimality",
+    "PRUNING_ANALYSIS": "Ask why a branch can be pruned safely",
+    "STABILITY_CHECK": "Ask whether sort preserves relative order of equal elements",
+    "LOOP_TERMINATION": "Ask how the loop is guaranteed to terminate",
+    "RECURSION_TRACE": "Ask to trace the recursion tree for a small input"
+  }
+}
