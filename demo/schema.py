@@ -38,3 +38,8 @@ class SocraticQuestion(BaseModel):
     pedagogical_goal: str = Field(
         description="What reasoning the question is intended to elicit."
     )
+
+class StudentResponse(BaseModel):
+    response: str = Field(
+        description="The student's response to the Socratic question."
+    )
