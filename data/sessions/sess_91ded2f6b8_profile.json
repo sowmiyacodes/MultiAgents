@@ -1,0 +1,74 @@
+{
+  "session_id": "sess_91ded2f6b8",
+  "last_updated": 1789850482.3004599,
+  "last_topic": "binary_search",
+  "misconception_detected": null,
+  "transfer_passed": false,
+  "socratic_rounds_count": 0,
+  "attempts": [],
+  "events": [
+    {
+      "id": 262,
+      "session_id": "sess_91ded2f6b8",
+      "student_id": "student_001",
+      "event_type": "SESSION_STARTED",
+      "timestamp": 1789850457.9779327,
+      "data_json": "{\"initial_query\": \"vector<bool> prime(n, true);\\n\\n        if (n <= 2) return 0;\\n\\n        prime[0] = prime[1] = false;\\n\\n        for (int i = 2; i * i < n; i++) {\\n            if (prime[i]) {\\n                for (int j = i * i; j < n; j += i) {\\n                    prime[j] = false;\\n                }\\n            }\\n        }\\n\\n        int count = 0;\\n\\n        for (int i = 2; i < n; i++) {\\n            if (prime[i]) {\\n                count++;\\n            }\\n        }\\n\\n        return count;\"}",
+      "data": {
+        "initial_query": "vector<bool> prime(n, true);\n\n        if (n <= 2) return 0;\n\n        prime[0] = prime[1] = false;\n\n        for (int i = 2; i * i < n; i++) {\n            if (prime[i]) {\n                for (int j = i * i; j < n; j += i) {\n                    prime[j] = false;\n                }\n            }\n        }\n\n        int count = 0;\n\n        for (int i = 2; i < n; i++) {\n            if (prime[i]) {\n                count++;\n            }\n        }\n\n        return count;"
+      }
+    },
+    {
+      "id": 263,
+      "session_id": "sess_91ded2f6b8",
+      "student_id": "student_001",
+      "event_type": "STATE_TRANSITION",
+      "timestamp": 1789850457.9808216,
+      "data_json": "{\"from\": \"START\", \"to\": \"DIAGNOSING\"}",
+      "data": {
+        "from": "START",
+        "to": "DIAGNOSING"
+      }
+    },
+    {
+      "id": 264,
+      "session_id": "sess_91ded2f6b8",
+      "student_id": "student_001",
+      "event_type": "QUESTION_CLASSIFIED",
+      "timestamp": 1789850477.93077,
+      "data_json": "{\"domain\": \"dynamic_programming\", \"topic\": \"Sieve of Eratosthenes\", \"subconcept\": \"Counting primes less than n\", \"difficulty\": \"medium\", \"intent\": \"SOLUTION_ATTEMPT\", \"adaptive\": false, \"reasoning\": \"Student posted a complete Sieve of Eratosthenes implementation for counting primes without indicating any specific misconception or error, so it is classified as a solution attempt with no adaptive tutoring needed.\"}",
+      "data": {
+        "domain": "dynamic_programming",
+        "topic": "Sieve of Eratosthenes",
+        "subconcept": "Counting primes less than n",
+        "difficulty": "medium",
+        "intent": "SOLUTION_ATTEMPT",
+        "adaptive": false,
+        "reasoning": "Student posted a complete Sieve of Eratosthenes implementation for counting primes without indicating any specific misconception or error, so it is classified as a solution attempt with no adaptive tutoring needed."
+      }
+    },
+    {
+      "id": 265,
+      "session_id": "sess_91ded2f6b8",
+      "student_id": "student_001",
+      "event_type": "GENERAL_ANSWER_GIVEN",
+      "timestamp": 1789850482.2896128,
+      "data_json": "{\"topic\": \"Sieve of Eratosthenes\"}",
+      "data": {
+        "topic": "Sieve of Eratosthenes"
+      }
+    },
+    {
+      "id": 266,
+      "session_id": "sess_91ded2f6b8",
+      "student_id": "student_001",
+      "event_type": "STATE_TRANSITION",
+      "timestamp": 1789850482.2951772,
+      "data_json": "{\"from\": \"DIAGNOSING\", \"to\": \"COMPLETE\"}",
+      "data": {
+        "from": "DIAGNOSING",
+        "to": "COMPLETE"
+      }
+    }
+  ]
+}

@@ -51,17 +51,9 @@ def run_interactive_session(
     engine: TutoringEngine,
     student_id: str = "student_001",
     initial_query: Optional[str] = None,
+    session_id: Optional[str] = None,
 ) -> None:
     print_banner()
-    print(f"Student: {student_id}")
-
-    # Check for second-encounter adaptation
-    past_states = engine.store.get_student_topic_states(student_id, "binary_search")
-    past_misc = engine.store.get_student_misconceptions(student_id)
-    if past_misc:
-        last = past_misc[0]
-        print(f"\n[NOTE] Welcome back, {student_id}! Loaded learning history:")
-        print(f"       Previous diagnosed misconception: {last['misconception_id']} in {last['topic']}.")
 
     if not initial_query:
         print("\nWhat DSA algorithm, code, or concept would you like to analyze today?")
@@ -70,15 +62,28 @@ def run_interactive_session(
     if not initial_query:
         initial_query = "int left = 0;\nint right = nums.length - 1;\nwhile (left <= right) {\n    int mid = (left + right) / 2;\n    if (nums[mid] == target) return mid;\n    if (nums[mid] < target) left++; else right--;\n}\nreturn -1;"
 
-    print(f"\nSubmitted Algorithm/Code:\n{initial_query}")
-
-
     session = engine.start_session(student_id=student_id, initial_query=initial_query)
+    if session_id:
+        session.session_id = session_id
+
+    print(f"Session ID: {session.session_id}")
+
+    # Check for previous session JSON state pickup by session_id
+    json_summary = engine.store.load_session_json_summary(session.session_id)
+    if json_summary:
+        print(f"\n[PERSISTENCE PICKUP] Loaded profile from JSON for Session '{session.session_id}':")
+        print(f"  - Misconception Detected:    {json_summary.get('misconception_detected') or 'None'}")
+        print(f"  - Transfer Problem Passed:   {json_summary.get('transfer_passed')}")
+        print(f"  - Socratic Rounds Completed: {json_summary.get('socratic_rounds_count')}")
+
+    print(f"\nSubmitted Algorithm/Code:\n{initial_query}")
 
     # State loop
     while not session.state.is_terminal:
         # Advance engine until it needs student input or completes
         engine.step(session)
+        # Sync session JSON summary after each step
+        engine.store.sync_session_json_summary(session.session_id)
 
         # Print current phase output
         if session.state == TutorState.WAITING_FOR_STUDENT:
@@ -111,9 +116,9 @@ def run_interactive_session(
             if not ans:
                 ans = "I think left should be mid + 1 because all indices through mid are smaller than target."
 
-
             # Advance with answer
             engine.step(session, student_input=ans)
+            engine.store.sync_session_json_summary(session.session_id)
 
             # Show evaluation
             if session.current_eval:
@@ -184,6 +189,8 @@ def run_interactive_session(
                 print(f"Message:     {session.current_plan.message}")
 
             print(f"\n{SEP_LINE}\nSESSION COMPLETED SUCCESSFULLY\n{SEP_LINE}")
+            json_file = engine.store.sync_session_json_summary(session.session_id)
+            print(f"[PERSISTENCE SAVED] Session summary profile saved to: {json_file}")
             break
 
         elif session.state == TutorState.HUMAN_REVIEW_WAITING:
@@ -191,7 +198,11 @@ def run_interactive_session(
             print("The student has reached maximum attempts without successful transfer.")
             print("Session escalated to HUMAN INSTRUCTOR REVIEW.")
             print(f"{SEP_LINE}\nSESSION ESCALATED\n{SEP_LINE}")
+            json_file = engine.store.sync_session_json_summary(session.session_id)
+            print(f"[PERSISTENCE SAVED] Session summary profile saved to: {json_file}")
             break
+
+
 
 
 def show_history(store: TutorStore, student_id: str) -> None:

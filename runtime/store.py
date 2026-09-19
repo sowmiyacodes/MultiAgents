@@ -412,3 +412,65 @@ class TutorStore:
             d["data"] = json.loads(d["data_json"])
             res.append(d)
         return res
+
+    # ── JSON Session State Export & Pickup ───────────────────────────────────
+
+    def sync_session_json_summary(self, session_id: str, json_dir: str | Path = "data/sessions") -> Path:
+        """
+        Saves session learning state summary to a JSON file:
+        <json_dir>/<session_id>_profile.json
+        Includes:
+        - session_id
+        - misconception_detected
+        - transfer_passed (boolean)
+        - socratic_rounds_count
+        - history of attempts
+        """
+        p_dir = Path(json_dir)
+        p_dir.mkdir(parents=True, exist_ok=True)
+        json_file = p_dir / f"{session_id}_profile.json"
+
+        # Query session attempts
+        attempts = self.get_session_attempts(session_id)
+        socratic_attempts = sum(1 for a in attempts if a.get("stage") == "socratic")
+        transfer_passed = any(a.get("transfer_success") == 1 for a in attempts)
+
+        # Query session events to get misconception / topic info
+        events = self.get_session_events(session_id)
+        misconceptions = []
+        last_topic = "binary_search"
+        last_misconception = None
+
+        for e in events:
+            data = e.get("data", {})
+            if e.get("event_type") == "DIAGNOSIS_CREATED" or "misconception_id" in data:
+                m_id = data.get("misconception_id")
+                if m_id:
+                    last_misconception = m_id
+                    misconceptions.append(data)
+
+        summary = {
+            "session_id": session_id,
+            "last_updated": time.time(),
+            "last_topic": last_topic,
+            "misconception_detected": last_misconception,
+            "transfer_passed": transfer_passed,
+            "socratic_rounds_count": socratic_attempts,
+            "attempts": attempts,
+            "events": events,
+        }
+
+        json_file.write_text(json.dumps(summary, indent=2), encoding="utf-8")
+        return json_file
+
+    def load_session_json_summary(self, session_id: str, json_dir: str | Path = "data/sessions") -> Optional[dict[str, Any]]:
+        """Reads session summary JSON if available to pick up where it left off."""
+        json_file = Path(json_dir) / f"{session_id}_profile.json"
+        if not json_file.exists():
+            return None
+        try:
+            return json.loads(json_file.read_text(encoding="utf-8"))
+        except Exception:
+            return None
+
+
