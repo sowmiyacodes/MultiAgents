@@ -1512,3 +1512,54 @@ Adapt the Next Encounter
 ```
 
 That is the core idea behind **ThinkAgain AI**.
+
+---
+
+## 38. Current Implementation Status
+
+The repository currently contains a working binary-search boundary-update slice.
+The implemented flow uses Diagnostic, Socratic, Evaluator, and Transfer agents,
+typed Pydantic schemas, deterministic state transitions, persistent SQLite
+history, token and attempt budgets, model fallback handling, and learning-state
+records.
+
+The implemented misconception is `M1_INCOMPLETE_ELIMINATION`. The current
+Socratic angle bank contains eliminated-range proof, counterexample array,
+invariant restatement, and opposite-branch transfer. An offline smoke run has
+also verified the bounded revision path:
+
+```text
+first draft -> BLOCK with an objection -> revised draft -> PASS
+```
+
+The offline smoke run uses canned responses and does not call an external model.
+Live agent calls use OpenRouter through `OPENROUTER_API_KEY`. The FastAPI expert
+callback interface exists as a reusable component, while the current
+boundary-loop CLI collects student responses in the terminal.
+
+For the detailed day-one implementation progress and known limitations, see
+[`docs/Progress_report_multiagents_day1.md`](docs/Progress_report_multiagents_day1.md).
+
+## 39. How to Run
+
+From the `MultiAgents` directory, install the dependencies:
+
+```powershell
+python -m pip install -r requirements.txt
+```
+
+To run the live boundary-loop demo, configure `OPENROUTER_API_KEY` in `.env`
+or in the process environment, then run:
+
+```powershell
+python run_boundary_loop.py
+```
+
+The program asks for the student's binary-search attempt and responses. Finish
+each multiline input by typing `END` on its own line.
+
+To verify the workflow offline without an API key, run:
+
+```powershell
+python scripts/smoke.py run --stub
+```
