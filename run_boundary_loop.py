@@ -1,30 +1,69 @@
 from pathlib import Path
 import sys
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(
+    0,
+    str(Path(__file__).resolve().parent),
+)
 
 from slice.config import settings
 from slice.runner import advance
+from slice.records import RunState
 from slice.store import Store
 
 from demo.flow import build_flow
 
 
-def main():
-    print()
-    print("=" * 60)
-    print("THE BOUNDARY LOOP")
-    print("Binary Search Misconception Tutor")
-    print("=" * 60)
-    print()
+def print_history(store, run_id):
 
-    print("Paste the student's binary-search attempt.")
-    print("Type END on a separate line when finished.")
+    print()
+    print("=" * 70)
+    print("RUN HISTORY")
+    print("=" * 70)
+
+    for record in store.replay(run_id):
+
+        print()
+        print(
+            f"[{record.produced_by}] "
+            f"{record.kind}"
+        )
+
+        for key, value in record.payload.items():
+            print(
+                f"{key}: {value}"
+            )
+
+    print()
+    print("-" * 70)
+
+
+def get_latest(store, run_id, kind):
+
+    records = [
+        record
+        for record in store.replay(run_id)
+        if record.kind == kind
+    ]
+
+    if not records:
+        return None
+
+    return records[-1].payload
+
+
+def collect_multiline(prompt):
+
+    print(prompt)
+    print(
+        "Type END on a separate line when finished."
+    )
     print()
 
     lines = []
 
     while True:
+
         line = input()
 
         if line.strip() == "END":
@@ -32,19 +71,193 @@ def main():
 
         lines.append(line)
 
-    student_attempt = "\n".join(lines).strip()
+    return "\n".join(lines).strip()
 
-    if not student_attempt:
-        print("No student attempt supplied.")
+
+def collect_student_attempt():
+
+    return collect_multiline(
+        "Paste the student's binary-search attempt."
+    )
+
+
+def collect_student_response():
+
+    return collect_multiline(
+        "Your answer:"
+    )
+
+
+def display_evaluator(store, run_id):
+
+    evaluator = get_latest(
+        store,
+        run_id,
+        "evaluator",
+    )
+
+    if evaluator is None:
         return
 
-    store = Store("run.db")
+    print()
+    print("=" * 70)
+    print("EVALUATOR")
+    print("=" * 70)
+    print()
+
+    print(
+        f"Outcome: {evaluator.get('outcome')}"
+    )
+
+    print(
+        f"Confidence: "
+        f"{evaluator.get('confidence')}"
+    )
+
+    print()
+
+    print("Evidence:")
+
+    for evidence in evaluator.get(
+        "evidence",
+        [],
+    ):
+        print(
+            f"- {evidence}"
+        )
+
+    print()
+
+    print(
+        "Reasoning assessment:"
+    )
+
+    print(
+        evaluator.get(
+            "reasoning_assessment",
+            "",
+        )
+    )
+
+    print()
+    print("-" * 70)
+
+
+def display_learning_state(
+    store,
+    run_id,
+):
+
+    state = get_latest(
+        store,
+        run_id,
+        "learning_state",
+    )
+
+    if state is None:
+        return
+
+    print()
+    print("=" * 70)
+    print("PERSISTENT LEARNING STATE")
+    print("=" * 70)
+    print()
+
+    print(
+        f"Status: {state.get('status')}"
+    )
+
+    print(
+        f"Misconception: "
+        f"{state.get('misconception')}"
+    )
+
+    print(
+        f"Transfer passed: "
+        f"{state.get('transfer_passed')}"
+    )
+
+    print()
+
+    print(
+        "Recommended next action:"
+    )
+
+    print(
+        state.get(
+            "recommended_next_action",
+            "",
+        )
+    )
+
+    print()
+    print("-" * 70)
+
+
+def display_tutor(
+    store,
+    run_id,
+):
+
+    tutor = get_latest(
+        store,
+        run_id,
+        "tutor",
+    )
+
+    if tutor is None:
+        return
+
+    print()
+    print("=" * 70)
+    print("TUTOR / WORKED EXAMPLE")
+    print("=" * 70)
+    print()
+
+    print(
+        tutor.get(
+            "explanation",
+            "",
+        )
+    )
+
+    print()
+    print("-" * 70)
+
+
+def main():
+
+    print()
+    print("=" * 70)
+    print("THE BOUNDARY LOOP")
+    print("Binary Search Misconception Tutor")
+    print("=" * 70)
+    print()
+
+    student_attempt = collect_student_attempt()
+
+    if not student_attempt:
+
+        print()
+        print(
+            "No student attempt supplied."
+        )
+
+        return
+
+    store = Store(
+        "run.db"
+    )
 
     run_id = store.create_run(
         "boundary_loop",
         meta={
-            "concept": "binary_search_boundary_updates",
-            "misconception": "M1_INCOMPLETE_ELIMINATION",
+            "concept": (
+                "binary_search_boundary_updates"
+            ),
+            "misconception": (
+                "M1_INCOMPLETE_ELIMINATION"
+            ),
         },
     )
 
@@ -52,119 +265,174 @@ def main():
         run_id,
         "student_attempt",
         {
-            "text": student_attempt,
+            "text": student_attempt
         },
         produced_by="student",
     )
 
     print()
-    print(f"Run ID: {run_id}")
+    print(
+        f"Run ID: {run_id}"
+    )
     print()
 
-    # ---------------------------------------------------------
-    # PHASE 1: Diagnostic + Socratic
-    # ---------------------------------------------------------
+    flow = build_flow()
 
     final_state = advance(
         store,
         run_id,
-        build_flow(),
+        flow,
         settings(),
     )
 
-    # ---------------------------------------------------------
-    # Get the generated Socratic question
-    # ---------------------------------------------------------
+    while final_state == RunState.AWAITING_EXPERT:
 
-    socratic_records = [
-        record
-        for record in store.replay(run_id)
-        if record.kind == "socratic"
-    ]
+        transfer = get_latest(
+            store,
+            run_id,
+            "transfer",
+        )
 
-    if not socratic_records:
+        socratic = get_latest(
+            store,
+            run_id,
+            "socratic",
+        )
+
         print()
-        print("No Socratic question was generated.")
-        return
 
-    socratic = socratic_records[-1].payload
+        if transfer is not None:
 
-    print()
-    print("=" * 60)
-    print("SOCRATIC QUESTION")
-    print("=" * 60)
-    print()
-    print(socratic["question"])
-    print()
-    print("-" * 60)
-    print("Your answer:")
-    print()
+            print("=" * 70)
+            print("FRESH TRANSFER TASK")
+            print("=" * 70)
+            print()
 
-    response_lines = []
+            print(
+                transfer["prompt"]
+            )
 
-    while True:
-        line = input()
+        elif socratic is not None:
 
-        if line.strip() == "END":
-            break
+            print("=" * 70)
+            print("SOCRATIC QUESTION")
+            print("=" * 70)
+            print()
 
-        response_lines.append(line)
+            print(
+                socratic["question"]
+            )
 
-    student_response = "\n".join(response_lines).strip()
+        else:
 
-    if not student_response:
+            print(
+                "ERROR: No pending question found."
+            )
+
+            return
+
         print()
-        print("No student response supplied.")
-        return
+        print("-" * 70)
 
-    # ---------------------------------------------------------
-    # Store student response
-    # ---------------------------------------------------------
+        student_response = (
+            collect_student_response()
+        )
 
-    store.append(
-        run_id,
-        "student_response",
-        {
-            "response": student_response,
-        },
-        produced_by="student",
-    )
+        if not student_response:
 
-    print()
-    print("Student response recorded.")
-    print()
+            print()
+            print(
+                "No student response supplied."
+            )
 
-    # ---------------------------------------------------------
-    # PHASE 2: Evaluator
-    # ---------------------------------------------------------
+            return
 
-    final_state = advance(
+        store.append(
+            run_id,
+            "student_response",
+            {
+                "response":
+                    student_response
+            },
+            produced_by="student",
+        )
+
+        print()
+        print(
+            "Student response recorded."
+        )
+
+        store.set_state(
+            run_id,
+            RunState.EVALUATING,
+        )
+
+        final_state = advance(
+            store,
+            run_id,
+            flow,
+            settings(),
+        )
+
+        display_evaluator(
+            store,
+            run_id,
+        )
+
+    display_learning_state(
         store,
         run_id,
-        build_flow(),
-        settings(),
     )
 
-    # ---------------------------------------------------------
-    # Show complete history
-    # ---------------------------------------------------------
+    display_tutor(
+        store,
+        run_id,
+    )
+
+    print_history(
+        store,
+        run_id,
+    )
+
+    print(
+        f"Final state: "
+        f"{final_state.value}"
+    )
 
     print()
-    print("-" * 60)
 
-    for record in store.replay(run_id):
-        print()
-        print(f"[{record.produced_by}] {record.kind}")
+    if final_state == RunState.COMPLETE:
 
-        for key, value in record.payload.items():
-            print(f"{key}: {value}")
+        print(
+            "Boundary Loop completed."
+        )
+
+    elif final_state == RunState.FAILED:
+
+        print(
+            "Boundary Loop failed."
+        )
+
+    else:
+
+        print(
+            "Boundary Loop stopped in state:"
+        )
+
+        print(
+            final_state.value
+        )
 
     print()
-    print("-" * 60)
-    print(f"Final state: {final_state.value}")
-    print()
-    print(f"Replay with:")
-    print(f"python scripts/smoke.py replay {run_id}")
+
+    print(
+        "Replay with:"
+    )
+
+    print(
+        f"python scripts/smoke.py replay {run_id}"
+    )
+
     print()
 
 

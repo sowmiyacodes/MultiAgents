@@ -6,19 +6,33 @@ from .schema import (
     DiagnosticResult,
     SocraticQuestion,
     EvaluationResult,
+    TransferTask,
 )
 
-PROMPT_DIR = Path(__file__).parent / "prompts"
+
+PROMPT_DIR = Path(__file__).resolve().parent / "prompts"
 
 
-def _read_prompt(name: str) -> str:
-    return (PROMPT_DIR / name).read_text(encoding="utf-8")
+def _read_prompt(filename: str) -> str:
+    path = PROMPT_DIR / filename
+
+    if not path.exists():
+        raise FileNotFoundError(
+            f"Prompt file not found: {path}"
+        )
+
+    return path.read_text(encoding="utf-8")
 
 
 class DiagnosticAgent:
     name = "diagnostic"
 
-    def run(self, ctx, student_attempt: str) -> DiagnosticResult:
+    def run(
+        self,
+        ctx,
+        student_attempt: str,
+    ) -> DiagnosticResult:
+
         prompt = _read_prompt("diagnostic.md")
 
         messages = [
@@ -29,22 +43,20 @@ class DiagnosticAgent:
             {
                 "role": "user",
                 "content": (
-                    "Diagnose the following binary-search attempt.\n\n"
-                    "STUDENT ATTEMPT:\n"
-                    f"{student_attempt}"
+                    "STUDENT BINARY-SEARCH ATTEMPT:\n\n"
+                    f"{student_attempt}\n\n"
+                    "Diagnose the reasoning."
                 ),
             },
         ]
 
-        result = complete(
+        return complete(
             settings=ctx.settings,
             budget=ctx.budget,
             messages=messages,
             schema=DiagnosticResult,
             step="diagnostic",
         )
-
-        return result
 
 
 class SocraticAgent:
@@ -57,12 +69,8 @@ class SocraticAgent:
         diagnostic: dict,
         angle: dict,
     ) -> SocraticQuestion:
-        prompt = _read_prompt("socratic.md")
 
-        used_angles = [
-            record.payload["angle_id"]
-            for record in ctx.history("socratic")
-        ]
+        prompt = _read_prompt("socratic.md")
 
         messages = [
             {
@@ -74,18 +82,16 @@ class SocraticAgent:
                 "content": (
                     "STUDENT ATTEMPT:\n"
                     f"{student_attempt}\n\n"
-                    "DIAGNOSTIC RESULT:\n"
+                    "DIAGNOSTIC:\n"
                     f"{diagnostic}\n\n"
-                    "SELECTED PEDAGOGICAL ANGLE:\n"
+                    "SELECTED SOCRATIC ANGLE:\n"
                     f"{angle}\n\n"
-                    "ALREADY USED ANGLES:\n"
-                    f"{used_angles}\n\n"
-                    "Generate exactly one Socratic question."
+                    "Generate one Socratic question."
                 ),
             },
         ]
 
-        result = complete(
+        return complete(
             settings=ctx.settings,
             budget=ctx.budget,
             messages=messages,
@@ -93,7 +99,6 @@ class SocraticAgent:
             step="socratic",
         )
 
-        return result
 
 class EvaluatorAgent:
     name = "evaluator"
@@ -103,9 +108,12 @@ class EvaluatorAgent:
         ctx,
         student_attempt: str,
         diagnostic: dict,
-        socratic_question: dict,
+        question: dict,
         student_response: str,
+        stage: str = "socratic",
+        transfer_task: dict | None = None,
     ) -> EvaluationResult:
+
         prompt = _read_prompt("evaluator.md")
 
         messages = [
@@ -116,20 +124,23 @@ class EvaluatorAgent:
             {
                 "role": "user",
                 "content": (
+                    f"EVALUATION STAGE:\n{stage}\n\n"
                     "ORIGINAL STUDENT ATTEMPT:\n"
                     f"{student_attempt}\n\n"
-                    "DIAGNOSTIC RESULT:\n"
+                    "DIAGNOSTIC:\n"
                     f"{diagnostic}\n\n"
-                    "SOCRATIC QUESTION:\n"
-                    f"{socratic_question}\n\n"
+                    "QUESTION OR TRANSFER TASK:\n"
+                    f"{question}\n\n"
                     "STUDENT RESPONSE:\n"
                     f"{student_response}\n\n"
+                    "TRANSFER TASK DETAILS:\n"
+                    f"{transfer_task}\n\n"
                     "Evaluate the student's reasoning."
                 ),
             },
         ]
 
-        result = complete(
+        return complete(
             settings=ctx.settings,
             budget=ctx.budget,
             messages=messages,
@@ -137,4 +148,40 @@ class EvaluatorAgent:
             step="evaluator",
         )
 
-        return result
+
+class TransferAgent:
+    name = "transfer"
+
+    def run(
+        self,
+        ctx,
+        diagnostic: dict,
+        task: dict,
+    ) -> TransferTask:
+
+        prompt = _read_prompt("transfer.md")
+
+        messages = [
+            {
+                "role": "system",
+                "content": prompt,
+            },
+            {
+                "role": "user",
+                "content": (
+                    "DIAGNOSTIC:\n"
+                    f"{diagnostic}\n\n"
+                    "TRANSFER TASK:\n"
+                    f"{task}\n\n"
+                    "Generate the fresh transfer task."
+                ),
+            },
+        ]
+
+        return complete(
+            settings=ctx.settings,
+            budget=ctx.budget,
+            messages=messages,
+            schema=TransferTask,
+            step="transfer",
+        )
