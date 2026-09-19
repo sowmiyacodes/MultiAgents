@@ -2,8 +2,11 @@ from pathlib import Path
 
 from slice.llm import complete
 
-from .schema import DiagnosticResult, SocraticQuestion
-
+from .schema import (
+    DiagnosticResult,
+    SocraticQuestion,
+    EvaluationResult,
+)
 
 PROMPT_DIR = Path(__file__).parent / "prompts"
 
@@ -88,6 +91,50 @@ class SocraticAgent:
             messages=messages,
             schema=SocraticQuestion,
             step="socratic",
+        )
+
+        return result
+
+class EvaluatorAgent:
+    name = "evaluator"
+
+    def run(
+        self,
+        ctx,
+        student_attempt: str,
+        diagnostic: dict,
+        socratic_question: dict,
+        student_response: str,
+    ) -> EvaluationResult:
+        prompt = _read_prompt("evaluator.md")
+
+        messages = [
+            {
+                "role": "system",
+                "content": prompt,
+            },
+            {
+                "role": "user",
+                "content": (
+                    "ORIGINAL STUDENT ATTEMPT:\n"
+                    f"{student_attempt}\n\n"
+                    "DIAGNOSTIC RESULT:\n"
+                    f"{diagnostic}\n\n"
+                    "SOCRATIC QUESTION:\n"
+                    f"{socratic_question}\n\n"
+                    "STUDENT RESPONSE:\n"
+                    f"{student_response}\n\n"
+                    "Evaluate the student's reasoning."
+                ),
+            },
+        ]
+
+        result = complete(
+            settings=ctx.settings,
+            budget=ctx.budget,
+            messages=messages,
+            schema=EvaluationResult,
+            step="evaluator",
         )
 
         return result
