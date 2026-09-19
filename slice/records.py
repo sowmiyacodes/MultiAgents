@@ -15,13 +15,14 @@ from enum import Enum
 from typing import Any
 
 
+
 class RunState(str, Enum):
     DRAFTING = "drafting"
     GATING = "gating"
-    WAITING_FOR_STUDENT = "waiting_for_student"
-    EVALUATING = "evaluating"
+    AWAITING_EXPERT = "awaiting_expert"
     COMPLETE = "complete"
     FAILED = "failed"
+
     @property
     def is_terminal(self) -> bool:
         return self in (RunState.COMPLETE, RunState.FAILED)
@@ -29,6 +30,7 @@ class RunState(str, Enum):
     @property
     def is_suspended(self) -> bool:
         return self is RunState.AWAITING_EXPERT
+
 
 
 @dataclass(frozen=True)
