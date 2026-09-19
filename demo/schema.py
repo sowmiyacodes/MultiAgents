@@ -19,6 +19,33 @@ VALID_PLANNER_ACTIONS = {
 
 
 
+class QueryClassification(BaseModel):
+    """Classification of a student query before routing."""
+
+    scope: str = Field(
+        description="'DSA' if this is a DSA question, 'OUT_OF_SCOPE' otherwise."
+    )
+    concept_id: str | None = Field(
+        default=None,
+        description="The matched DSA concept identifier, or None."
+    )
+    query_type: str = Field(
+        description=(
+            "One of: CODE_SUBMISSION, MISCONCEPTION_REQUIRES_DIAGNOSIS, "
+            "GENERAL_QUESTION, CONCEPTUAL_DOUBT, UNKNOWN."
+        )
+    )
+    confidence: float = Field(
+        ge=0.0,
+        le=1.0,
+        description="Confidence in the classification.",
+    )
+    matched_keywords: list[str] = Field(
+        default_factory=list,
+        description="Keywords that drove the classification.",
+    )
+
+
 class DiagnosticResult(BaseModel):
     misconception: str = Field(
         description="The diagnosed misconception identifier."
@@ -38,6 +65,11 @@ class DiagnosticResult(BaseModel):
 
     reasoning_pattern: str = Field(
         description="Description of the student's reasoning pattern."
+    )
+
+    concept_id: str | None = Field(
+        default=None,
+        description="The DSA concept that was diagnosed (optional, injected by flow)."
     )
 
 
@@ -115,6 +147,23 @@ class BackwardLoopRecord(BaseModel):
     )
 
 
+class ConceptLearningEntry(BaseModel):
+    """Per-concept learning record within a multi-concept LearningState."""
+
+    concept_id: str = Field(description="The DSA concept being tracked.")
+    misconception: str = Field(description="The tracked misconception.")
+    status: str = Field(description="Current learning status for this concept.")
+    successful_angles: list[str] = Field(default_factory=list)
+    reinforced_angles: list[str] = Field(default_factory=list)
+    transfer_passed: bool = False
+    wrong_socratic_count: int = 0
+    backward_loop_count: int = 0
+    recommended_next_action: str = Field(
+        default="",
+        description="Recommended next action for a future encounter.",
+    )
+
+
 class LearningState(BaseModel):
     misconception: str = Field(
         description="The tracked misconception."
@@ -140,6 +189,12 @@ class LearningState(BaseModel):
 
     wrong_socratic_count: int = 0
     backward_loop_count: int = 0
+
+    # Multi-concept extension: per-concept history (optional)
+    concepts: dict[str, ConceptLearningEntry] = Field(
+        default_factory=dict,
+        description="Per-concept learning entries keyed by concept_id.",
+    )
 
 
 class PlannerDecision(BaseModel):
@@ -186,4 +241,4 @@ class TutorResponse(BaseModel):
     difficulty: str = Field(
         default="medium",
         description="Difficulty level of the question or task."
-    )
+    )

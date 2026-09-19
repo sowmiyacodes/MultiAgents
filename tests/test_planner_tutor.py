@@ -216,7 +216,7 @@ def test_3_tutor_r8_generates_socratic_question(tmp_path):
 
     response = tutor.run(
         ctx,
-        student_attempt="left = left + 1",
+        student_attempt="while left <= right: left = left + 1",
         diagnostic={"misconception": "M1_INCOMPLETE_ELIMINATION"},
         planner_decision=decision,
         current_phase="socratic",
@@ -248,7 +248,7 @@ def test_4_tutor_r8_generates_transfer_task(tmp_path):
 
     response = tutor.run(
         ctx,
-        student_attempt="left = left + 1",
+        student_attempt="while left <= right: left = left + 1",
         diagnostic={"misconception": "M1_INCOMPLETE_ELIMINATION"},
         planner_decision=decision,
         current_phase="transfer",
@@ -299,7 +299,7 @@ def test_7_backward_loop_causes_planner_to_receive_context(tmp_path):
     """7. Backward loop causes Planner to receive backward-loop context."""
     store = Store(str(tmp_path / "t7.db"))
     run_id = store.create_run("boundary_loop")
-    store.append(run_id, "student_attempt", {"text": "left = left + 1"}, produced_by="student")
+    store.append(run_id, "student_attempt", {"text": "while left <= right: left = left + 1"}, produced_by="student")
 
     mock = MockLLMCall(evaluator_outcomes=["REINFORCE", "REINFORCE", "REINFORCE"])
     flow = build_flow(call=mock)
@@ -329,7 +329,7 @@ def test_8_backward_loop_produces_simpler_socratic_question(tmp_path):
     """8. Backward loop produces a simpler Socratic Tutor question."""
     store = Store(str(tmp_path / "t8.db"))
     run_id = store.create_run("boundary_loop")
-    store.append(run_id, "student_attempt", {"text": "left = left + 1"}, produced_by="student")
+    store.append(run_id, "student_attempt", {"text": "while left <= right: left = left + 1"}, produced_by="student")
 
     mock = MockLLMCall(
         planner_action="BACKWARD_REMEDIATE",
@@ -355,7 +355,7 @@ def test_9_existing_current_question_phase_tracking(tmp_path):
     """9. Current-question phase tracking still works (historical transfer doesn't corrupt Socratic)."""
     store = Store(str(tmp_path / "t9.db"))
     run_id = store.create_run("boundary_loop")
-    store.append(run_id, "student_attempt", {"text": "left = left + 1"}, produced_by="student")
+    store.append(run_id, "student_attempt", {"text": "while left <= right: left = left + 1"}, produced_by="student")
 
     mock = MockLLMCall(evaluator_outcomes=["PASS", "REINFORCE"])
     flow = build_flow(call=mock)
@@ -387,7 +387,7 @@ def test_10_backward_loop_cycle_and_counter_reset(tmp_path):
     """10. Backward loop counter resets after trigger and tracks cycles."""
     store = Store(str(tmp_path / "t10.db"))
     run_id = store.create_run("boundary_loop")
-    store.append(run_id, "student_attempt", {"text": "left = left + 1"}, produced_by="student")
+    store.append(run_id, "student_attempt", {"text": "while left <= right: left = left + 1"}, produced_by="student")
 
     mock = MockLLMCall(evaluator_outcomes=["REINFORCE", "REINFORCE", "REINFORCE", "PASS", "PASS"])
     flow = build_flow(call=mock)
@@ -414,7 +414,7 @@ def test_11_transfer_success_completes_run(tmp_path):
     """11. Socratic pass + Transfer pass completes run."""
     store = Store(str(tmp_path / "t11.db"))
     run_id = store.create_run("boundary_loop")
-    store.append(run_id, "student_attempt", {"text": "left = left + 1"}, produced_by="student")
+    store.append(run_id, "student_attempt", {"text": "while left <= right: left = left + 1"}, produced_by="student")
 
     mock = MockLLMCall(evaluator_outcomes=["PASS", "PASS"])
     flow = build_flow(call=mock)

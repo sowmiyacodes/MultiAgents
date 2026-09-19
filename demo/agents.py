@@ -27,6 +27,29 @@ def _read_prompt(filename: str) -> str:
     return path.read_text(encoding="utf-8")
 
 
+def _concept_context(
+    concept_id: str | None = None,
+    misconception_id: str | None = None,
+    core_invariant: str | None = None,
+    symptom_patterns: list[str] | None = None,
+    display_name: str | None = None,
+) -> str:
+    """Build a concept-metadata block to inject into LLM user messages."""
+    if not concept_id:
+        return ""
+    parts = [
+        f"CONCEPT: {display_name or concept_id}",
+        f"CONCEPT ID: {concept_id}",
+    ]
+    if misconception_id:
+        parts.append(f"TARGET MISCONCEPTION ID: {misconception_id}")
+    if core_invariant:
+        parts.append(f"CORE INVARIANT: {core_invariant}")
+    if symptom_patterns:
+        parts.append("SYMPTOM PATTERNS:\n" + "\n".join(f"  - {p}" for p in symptom_patterns))
+    return "\n".join(parts)
+
+
 class DiagnosticAgent:
     name = "diagnostic"
 
@@ -37,9 +60,30 @@ class DiagnosticAgent:
         self,
         ctx,
         student_attempt: str,
+        # Generalization: optional concept metadata
+        concept_id: str | None = None,
+        misconception_id: str | None = None,
+        core_invariant: str | None = None,
+        symptom_patterns: list[str] | None = None,
+        display_name: str | None = None,
+        supported_misconceptions: list[str] | None = None,
+        **kwargs,
     ) -> DiagnosticResult:
 
         prompt = _read_prompt("diagnostic.md")
+
+        ctx_block = _concept_context(
+            concept_id=concept_id,
+            misconception_id=misconception_id,
+            core_invariant=core_invariant,
+            symptom_patterns=symptom_patterns,
+            display_name=display_name,
+        )
+        misconceptions_block = (
+            f"\nSUPPORTED MISCONCEPTION IDs: {supported_misconceptions}"
+            if supported_misconceptions
+            else ""
+        )
 
         messages = [
             {
@@ -49,20 +93,25 @@ class DiagnosticAgent:
             {
                 "role": "user",
                 "content": (
-                    "STUDENT BINARY-SEARCH ATTEMPT:\n\n"
+                    f"{ctx_block}\n{misconceptions_block}\n\n"
+                    f"STUDENT ATTEMPT:\n\n"
                     f"{student_attempt}\n\n"
                     "Diagnose the reasoning."
-                ),
+                ).strip(),
             },
         ]
 
-        return self.call(
+        result = self.call(
             settings=ctx.settings,
             budget=ctx.budget,
             messages=messages,
             schema=DiagnosticResult,
             step="diagnostic",
         )
+        # Inject concept_id so flow.py can carry it forward
+        if concept_id and not result.concept_id:
+            result = result.model_copy(update={"concept_id": concept_id})
+        return result
 
 
 class SocraticAgent:
@@ -135,9 +184,26 @@ class EvaluatorAgent:
         student_response: str,
         stage: str = "socratic",
         transfer_task: dict | None = None,
+        # Generalization: optional concept metadata
+        concept_id: str | None = None,
+        core_invariant: str | None = None,
+        misconception_id: str | None = None,
+        target_reasoning: str | None = None,
+        **kwargs,
     ) -> EvaluationResult:
 
         prompt = _read_prompt("evaluator.md")
+
+        ctx_block = _concept_context(
+            concept_id=concept_id,
+            misconception_id=misconception_id,
+            core_invariant=core_invariant,
+        )
+        target_block = (
+            f"\nTARGET REASONING:\n{target_reasoning}"
+            if target_reasoning
+            else ""
+        )
 
         messages = [
             {
@@ -147,6 +213,7 @@ class EvaluatorAgent:
             {
                 "role": "user",
                 "content": (
+                    f"{ctx_block}{target_block}\n\n"
                     f"EVALUATION STAGE:\n{stage}\n\n"
                     "ORIGINAL STUDENT ATTEMPT:\n"
                     f"{student_attempt}\n\n"
@@ -159,7 +226,7 @@ class EvaluatorAgent:
                     "TRANSFER TASK DETAILS:\n"
                     f"{transfer_task}\n\n"
                     "Evaluate the student's reasoning."
-                ),
+                ).strip(),
             },
         ]
 
@@ -256,11 +323,25 @@ class PlannerAgent:
         current_phase: str = "socratic",
         transfer_attempted: bool = False,
         backward_loop: dict | None = None,
+        # Generalization: optional concept metadata
+        concept_id: str | None = None,
+        core_invariant: str | None = None,
+        misconception_id: str | None = None,
+        display_name: str | None = None,
+        **kwargs,
     ) -> PlannerDecision:
         prompt = _read_prompt("planner.md")
 
+        ctx_block = _concept_context(
+            concept_id=concept_id,
+            misconception_id=misconception_id,
+            core_invariant=core_invariant,
+            display_name=display_name,
+        )
+
         user_content = (
-            f"STUDENT BINARY-SEARCH ATTEMPT:\n{student_attempt}\n\n"
+            f"{ctx_block}\n\n"
+            f"STUDENT ATTEMPT:\n{student_attempt}\n\n"
             f"DIAGNOSTIC:\n{diagnostic}\n\n"
             f"CURRENT LEARNING STATE:\n{learning_state}\n\n"
             f"CURRENT PHASE:\n{current_phase}\n\n"
@@ -271,7 +352,7 @@ class PlannerAgent:
             f"BACKWARD LOOP TRIGGER CONTEXT:\n{backward_loop}\n\n"
             f"RECENT EVALUATIONS:\n{evaluators or []}\n\n"
             "Recommend the next pedagogical move."
-        )
+        ).strip()
 
         messages = [
             {
@@ -305,10 +386,10 @@ class PlannerAgent:
                 return PlannerDecision(
                     action=fallback_act,  # type: ignore[arg-type]
                     reason=f"Invalid action '{result.action}' safely overridden to {fallback_act}.",
-                    pedagogical_goal=result.pedagogical_goal or "Reason about eliminated range invariant",
+                    pedagogical_goal=result.pedagogical_goal or "Reason about core invariant",
                     preferred_angle=result.preferred_angle or "COUNTEREXAMPLE_ARRAY",
                     difficulty="foundational" if fallback_act == "BACKWARD_REMEDIATE" else "medium",
-                    focus="boundary_elimination",
+                    focus=core_invariant or "boundary_elimination",
                 )
             return result
         except Exception as e:
@@ -325,10 +406,10 @@ class PlannerAgent:
                 return PlannerDecision(
                     action=fallback_act,
                     reason=f"Offline deterministic pedagogical decision ({fallback_act}).",
-                    pedagogical_goal="Reason about the entire eliminated range invariant",
+                    pedagogical_goal="Reason about the entire invariant",
                     preferred_angle=pref_angle,
                     difficulty="foundational" if fallback_act == "BACKWARD_REMEDIATE" else "medium",
-                    focus="boundary_elimination",
+                    focus=core_invariant or "boundary_elimination",
                 )
             fallback_act = self._fallback_action(
                 diagnostic=diagnostic,
@@ -341,10 +422,10 @@ class PlannerAgent:
             return PlannerDecision(
                 action=fallback_act,
                 reason=f"Planner error ({e}) safely overridden to {fallback_act}.",
-                pedagogical_goal="Reason about the entire eliminated range invariant",
+                pedagogical_goal="Reason about the entire invariant",
                 preferred_angle="COUNTEREXAMPLE_ARRAY",
                 difficulty="foundational" if fallback_act == "BACKWARD_REMEDIATE" else "medium",
-                focus="boundary_elimination",
+                focus=core_invariant or "boundary_elimination",
             )
 
 
@@ -367,10 +448,30 @@ class TutorAgentR8:
         backward_loop: dict | None = None,
         angle: dict | None = None,
         task: dict | None = None,
+        # Generalization: optional concept metadata
+        concept_id: str | None = None,
+        core_invariant: str | None = None,
+        misconception_id: str | None = None,
+        display_name: str | None = None,
+        default_explanation: str | None = None,
+        **kwargs,
     ) -> TutorResponse:
         prompt = _read_prompt("tutor_r8.md")
 
+        ctx_block = _concept_context(
+            concept_id=concept_id,
+            misconception_id=misconception_id,
+            core_invariant=core_invariant,
+            display_name=display_name,
+        )
+        explanation_block = (
+            f"\nDEFAULT WORKED EXPLANATION:\n{default_explanation}"
+            if default_explanation and current_phase == "explanation"
+            else ""
+        )
+
         user_content = (
+            f"{ctx_block}{explanation_block}\n\n"
             f"STUDENT ATTEMPT:\n{student_attempt}\n\n"
             f"DIAGNOSTIC:\n{diagnostic}\n\n"
             f"PLANNER DECISION:\n{planner_decision.model_dump()}\n\n"
@@ -381,7 +482,7 @@ class TutorAgentR8:
             f"SUGGESTED ANGLE:\n{angle}\n\n"
             f"SUGGESTED TRANSFER TASK:\n{task}\n\n"
             f"Generate the student-facing content for phase '{current_phase}'."
-        )
+        ).strip()
 
         messages = [
             {
@@ -434,4 +535,4 @@ class TutorAgentR8:
                         angle_id=res.angle_id,
                         difficulty=planner_decision.difficulty,
                     )
-            raise
+            raise

@@ -14,11 +14,12 @@ from slice.records import RunState
 from slice.store import Store
 
 from demo.flow import build_flow
+from demo.concept_registry import get_concept
 
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="The Boundary Loop: Binary Search Misconception Tutor"
+        description="The Boundary Loop: DSA Learning Tutor"
     )
     parser.add_argument(
         "--debug",
@@ -29,9 +30,14 @@ def parse_args():
 
 
 def format_misconception(code: str) -> str:
-    if code == "M1_INCOMPLETE_ELIMINATION":
-        return "Incomplete boundary elimination"
-    return code.replace("_", " ").title()
+    NAMES = {
+        "M1_INCOMPLETE_ELIMINATION": "Incomplete boundary elimination (Binary Search)",
+        "TP1_WRONG_POINTER_MOVEMENT": "Wrong pointer movement (Two Pointers)",
+        "SW1_INCOMPLETE_SHRINK": "Incomplete window shrinking (Sliding Window)",
+        "GENERAL_QUESTION": "General DSA question",
+        "UNCERTAIN": "Uncertain / insufficient evidence",
+    }
+    return NAMES.get(code, code.replace("_", " ").title())
 
 
 def format_outcome(outcome: str) -> str:
@@ -89,7 +95,7 @@ def collect_multiline(prompt):
 
 def collect_student_attempt():
     return collect_multiline(
-        "Paste the student's binary-search attempt."
+        "Enter your question or paste your DSA code attempt:"
     )
 
 
@@ -97,6 +103,33 @@ def collect_student_response():
     return collect_multiline(
         "Your answer:"
     )
+
+
+def display_classification(store, run_id, debug=False):
+    clf = get_latest(store, run_id, "query_classification")
+    if clf is None:
+        return
+
+    concept_id = clf.get("concept_id")
+    query_type = clf.get("query_type", "")
+    concept = get_concept(concept_id) if concept_id else None
+    concept_name = concept.display_name if concept else "Unknown"
+
+    if debug:
+        print("------------------------------------------------------------")
+        print("[DEBUG] QUERY CLASSIFICATION")
+        print("------------------------------------------------------------")
+        print(f"Scope:       {clf.get('scope')}")
+        print(f"Concept:     {concept_name} ({concept_id})")
+        print(f"Query Type:  {query_type}")
+        print(f"Confidence:  {clf.get('confidence', 0.0):.0%}")
+        if clf.get("matched_keywords"):
+            print(f"Keywords:    {', '.join(clf['matched_keywords'][:5])}")
+        print("------------------------------------------------------------")
+        print()
+    elif concept_id:
+        print(f"Concept detected: {concept_name}")
+        print()
 
 
 def display_diagnosis(store, run_id, debug=False):
@@ -236,10 +269,27 @@ def display_debug_tutor(store, run_id):
     print()
 
 
+def display_general_answer(store, run_id, debug=False):
+    """Display result for a general question answered by Tutor R8."""
+    tutor = get_latest(store, run_id, "tutor")
+    if tutor is None:
+        return
+
+    print()
+    print("------------------------------------------------------------")
+    print("TUTOR EXPLANATION")
+    print("------------------------------------------------------------")
+    print()
+    print(tutor.get("question", ""))
+    print()
+    print("------------------------------------------------------------")
+    print()
+
+
 def display_success(store, run_id, debug=False):
     print()
     print("============================================================")
-    print("                 BOUNDARY LOOP COMPLETE")
+    print("              BOUNDARY LOOP COMPLETE")
     print("============================================================")
     print()
     diagnostic = get_latest(store, run_id, "diagnostic")
@@ -256,7 +306,7 @@ def display_success(store, run_id, debug=False):
     print("[v] Socratic reasoning demonstrated")
     print("[v] Transfer reasoning demonstrated")
     print()
-    print("The student successfully applied the boundary invariant")
+    print("The student successfully applied the core invariant")
     print("to a new problem.")
     print()
     print("============================================================")
@@ -270,23 +320,26 @@ def run_session(debug=False):
     print()
     print("============================================================")
     print("                    THE BOUNDARY LOOP")
-    print("              Binary Search Misconception Tutor")
+    print("              DSA Learning Tutor — Multi-Concept")
     print("============================================================")
     print()
     print(f"Model: {model_name}")
+    print()
+    print("Supported concepts: Binary Search, Two Pointers, Sliding Window")
+    print("You can also ask general DSA questions (e.g. 'What is a stack?')")
+    print()
 
     student_attempt = collect_student_attempt()
     if not student_attempt:
         print()
-        print("No student attempt supplied.")
+        print("No input supplied.")
         return
 
     store = Store("run.db")
     run_id = store.create_run(
         "boundary_loop",
         meta={
-            "concept": "binary_search_boundary_updates",
-            "misconception": "M1_INCOMPLETE_ELIMINATION",
+            "concept": "dsa_multi_concept",
         },
     )
 
@@ -301,7 +354,7 @@ def run_session(debug=False):
     print()
 
     print("------------------------------------------------------------")
-    print("STUDENT ATTEMPT")
+    print("INPUT")
     print("------------------------------------------------------------")
     print()
     print(student_attempt)
@@ -314,6 +367,23 @@ def run_session(debug=False):
         flow,
         cfg,
     )
+
+    display_classification(store, run_id, debug=debug)
+
+    # Check if it was a general question answered immediately
+    learning_state = get_latest(store, run_id, "learning_state")
+    if learning_state and learning_state.get("status") == "CONCEPTUAL_QUERY_ANSWERED":
+        display_general_answer(store, run_id, debug=debug)
+        if debug:
+            display_debug_tutor(store, run_id)
+        return
+
+    if learning_state and learning_state.get("status") == "OUT_OF_SCOPE":
+        print()
+        print("This question is outside the scope of the DSA tutor.")
+        print("Please submit a DSA-related code attempt or question.")
+        print()
+        return
 
     display_diagnosis(store, run_id, debug=debug)
 
