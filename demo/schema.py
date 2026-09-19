@@ -3,16 +3,13 @@ from pydantic import BaseModel, Field
 
 class DiagnosticResult(BaseModel):
     misconception: str = Field(
-        description=(
-            "The diagnosed misconception. Use "
-            "M1_INCOMPLETE_ELIMINATION, NONE, or UNCERTAIN."
-        )
+        description="The diagnosed misconception identifier."
     )
 
     confidence: float = Field(
         ge=0.0,
         le=1.0,
-        description="Confidence in the diagnosis from 0 to 1."
+        description="Confidence in the diagnosis."
     )
 
     evidence: list[str] = Field(
@@ -22,53 +19,85 @@ class DiagnosticResult(BaseModel):
     )
 
     reasoning_pattern: str = Field(
-        description="The reasoning pattern that appears to cause the error."
+        description="Description of the student's reasoning pattern."
     )
 
 
 class SocraticQuestion(BaseModel):
     angle_id: str = Field(
-        description="The pedagogical angle used for this intervention."
+        description="The Socratic angle used."
     )
 
     question: str = Field(
-        description="Exactly one Socratic question for the student."
+        description="The Socratic question."
     )
 
     pedagogical_goal: str = Field(
         description="What reasoning the question is intended to elicit."
     )
 
+
 class StudentResponse(BaseModel):
     response: str = Field(
-        description="The student's response to the Socratic question."
+        description="The student's response."
     )
+
 
 class EvaluationResult(BaseModel):
     outcome: str = Field(
-        description=(
-            "Evaluation outcome. Use PASS, REINFORCE, or UNCERTAIN."
-        )
+        description="Evaluation outcome: PASS, REINFORCE, or UNCERTAIN."
     )
 
     confidence: float = Field(
         ge=0.0,
         le=1.0,
-        description="Confidence in the evaluation from 0 to 1."
+        description="Confidence in the evaluation."
     )
 
     evidence: list[str] = Field(
         min_length=1,
         max_length=3,
-        description=(
-            "Concrete evidence from the student's response "
-            "supporting the evaluation."
-        )
+        description="Concrete evidence from the student's response."
     )
 
     reasoning_assessment: str = Field(
-        description=(
-            "Assessment of whether the student's reasoning shows "
-            "understanding of complete boundary elimination."
-        )
+        description="Assessment of the student's reasoning."
+    )
+
+
+class TransferTask(BaseModel):
+    task_id: str = Field(
+        description="Identifier for the transfer task."
+    )
+
+    prompt: str = Field(
+        description="A fresh binary-search reasoning task."
+    )
+
+    target_reasoning: str = Field(
+        description="The reasoning the student should demonstrate."
+    )
+
+
+class LearningState(BaseModel):
+    misconception: str = Field(
+        description="The tracked misconception."
+    )
+
+    status: str = Field(
+        description="Current learning status."
+    )
+
+    successful_angles: list[str] = Field(
+        default_factory=list
+    )
+
+    reinforced_angles: list[str] = Field(
+        default_factory=list
+    )
+
+    transfer_passed: bool = False
+
+    recommended_next_action: str = Field(
+        description="Recommended next action for a future encounter."
     )
