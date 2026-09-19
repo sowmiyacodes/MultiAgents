@@ -16,22 +16,12 @@ from typing import Any
 
 
 class RunState(str, Enum):
-    """
-    Where a run is. Code - not a model - decides every transition between these.
-
-    Terminal states are COMPLETE and FAILED. AWAITING_EXPERT is *suspended*,
-    not terminal: the process can exit entirely and a later invocation picks
-    the run back up. That is only possible because state lives in the database
-    rather than in a conversation.
-    """
-
-    DRAFTING        = "drafting"          # an agent is producing a record
-    GATING          = "gating"            # a judge is deciding pass / block
-    PROBING         = "probing"           # evidence gathering, tool use
-    AWAITING_EXPERT = "awaiting_expert"   # suspended on a human
-    COMPLETE        = "complete"
-    FAILED          = "failed"
-
+    DRAFTING = "drafting"
+    GATING = "gating"
+    WAITING_FOR_STUDENT = "waiting_for_student"
+    EVALUATING = "evaluating"
+    COMPLETE = "complete"
+    FAILED = "failed"
     @property
     def is_terminal(self) -> bool:
         return self in (RunState.COMPLETE, RunState.FAILED)

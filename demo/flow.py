@@ -1,13 +1,14 @@
 from slice.llm import complete
 from slice.records import RunState
 
-from .agents import DiagnosticAgent, SocraticAgent
+from .agents import DiagnosticAgent, SocraticAgent, EvaluatorAgent
 from .angles import ANGLES
 
 
 def build_flow(call=complete):
     diagnostic_agent = DiagnosticAgent()
     socratic_agent = SocraticAgent()
+    evaluator_agent = EvaluatorAgent()
 
     def handle_diagnostic(ctx):
         student = ctx.latest("student_attempt")
@@ -51,11 +52,13 @@ def build_flow(call=complete):
                 },
                 produced_by="socratic",
             )
+
             return RunState.COMPLETE
 
         used_angles = {
             record.payload["angle_id"]
             for record in ctx.history("socratic")
+            if "angle_id" in record.payload
         }
 
         available_angles = [
@@ -65,9 +68,7 @@ def build_flow(call=complete):
         ]
 
         if not available_angles:
-            raise ValueError(
-                "No unused Socratic angles remain."
-            )
+            raise ValueError("No unused Socratic angles remain.")
 
         selected_angle = available_angles[0]
 
@@ -82,6 +83,40 @@ def build_flow(call=complete):
             "socratic",
             result.model_dump(),
             produced_by="socratic",
+        )
+
+        return RunState.COMPLETE
+
+    def handle_evaluator(ctx):
+        student = ctx.latest("student_attempt")
+        diagnostic = ctx.latest("diagnostic")
+        socratic = ctx.latest("socratic")
+        response = ctx.latest("student_response")
+
+        if student is None:
+            raise ValueError("No student_attempt record found.")
+
+        if diagnostic is None:
+            raise ValueError("No diagnostic result found.")
+
+        if socratic is None:
+            raise ValueError("No socratic question found.")
+
+        if response is None:
+            raise ValueError("No student_response record found.")
+
+        result = evaluator_agent.run(
+            ctx,
+            student["text"],
+            diagnostic,
+            socratic,
+            response["response"],
+        )
+
+        ctx.append(
+            "evaluator",
+            result.model_dump(),
+            produced_by="evaluator",
         )
 
         return RunState.COMPLETE
