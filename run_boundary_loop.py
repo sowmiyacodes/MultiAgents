@@ -4,7 +4,6 @@ import sys
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from slice.config import settings
-from slice.records import RunState
 from slice.runner import advance
 from slice.store import Store
 
@@ -62,12 +61,93 @@ def main():
     print(f"Run ID: {run_id}")
     print()
 
+    # ---------------------------------------------------------
+    # PHASE 1: Diagnostic + Socratic
+    # ---------------------------------------------------------
+
     final_state = advance(
         store,
         run_id,
         build_flow(),
         settings(),
     )
+
+    # ---------------------------------------------------------
+    # Get the generated Socratic question
+    # ---------------------------------------------------------
+
+    socratic_records = [
+        record
+        for record in store.replay(run_id)
+        if record.kind == "socratic"
+    ]
+
+    if not socratic_records:
+        print()
+        print("No Socratic question was generated.")
+        return
+
+    socratic = socratic_records[-1].payload
+
+    print()
+    print("=" * 60)
+    print("SOCRATIC QUESTION")
+    print("=" * 60)
+    print()
+    print(socratic["question"])
+    print()
+    print("-" * 60)
+    print("Your answer:")
+    print()
+
+    response_lines = []
+
+    while True:
+        line = input()
+
+        if line.strip() == "END":
+            break
+
+        response_lines.append(line)
+
+    student_response = "\n".join(response_lines).strip()
+
+    if not student_response:
+        print()
+        print("No student response supplied.")
+        return
+
+    # ---------------------------------------------------------
+    # Store student response
+    # ---------------------------------------------------------
+
+    store.append(
+        run_id,
+        "student_response",
+        {
+            "response": student_response,
+        },
+        produced_by="student",
+    )
+
+    print()
+    print("Student response recorded.")
+    print()
+
+    # ---------------------------------------------------------
+    # PHASE 2: Evaluator
+    # ---------------------------------------------------------
+
+    final_state = advance(
+        store,
+        run_id,
+        build_flow(),
+        settings(),
+    )
+
+    # ---------------------------------------------------------
+    # Show complete history
+    # ---------------------------------------------------------
 
     print()
     print("-" * 60)
