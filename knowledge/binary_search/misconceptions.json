@@ -67,7 +67,7 @@
           "mid": 3,
           "nums_mid": 40,
           "target": 30,
-          "question": "Array: [10, 20, 30, 40, 50]\nleft=2, right=4, mid=3, nums[mid]=40, target=30\n\nnums[mid] > target here. Which indices are eliminated?\nWhat should right become, and why?",
+          "question": "Array: [10, 20, 30, 40, 50]\nleft=2, right=4, mid=3, nums[mid]=40, target=30\n\nnums[mid] > target here. Which indices are eliminated?\nWhat should the right boundary become, and why?",
           "target_reasoning": "Since nums[3]=40 > 30, all indices 3..4 are impossible. Therefore right=mid-1=2. The search continues in [2,2]."
         }
       ]

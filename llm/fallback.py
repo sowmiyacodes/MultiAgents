@@ -391,7 +391,10 @@ def evaluate(
             pass_hit = True
             fail_hit = False
     elif "which side" in q_lower or "eliminated" in q_lower:
-        if any(w in text_lower for w in ["left", "smaller", "before mid", "0..mid", "first half"]):
+        if any(w in text_lower for w in [
+            "mid + 1", "mid+1", "all indices", "all elements",
+            "impossible", "ruled out", "before mid", "0..mid", "first half",
+        ]):
             pass_hit = True
             fail_hit = False
 

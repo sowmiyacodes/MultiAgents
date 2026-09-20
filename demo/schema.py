@@ -18,6 +18,26 @@ VALID_PLANNER_ACTIONS = {
 }
 
 
+class QueryClassification(BaseModel):
+    scope: str
+    concept_id: str | None = None
+    query_type: str
+    confidence: float = Field(ge=0.0, le=1.0)
+    matched_keywords: list[str] = Field(default_factory=list)
+
+
+class ConceptLearningEntry(BaseModel):
+    concept_id: str
+    misconception: str
+    status: str
+    successful_angles: list[str] = Field(default_factory=list)
+    reinforced_angles: list[str] = Field(default_factory=list)
+    transfer_passed: bool = False
+    recommended_next_action: str
+    wrong_socratic_count: int = 0
+    backward_loop_count: int = 0
+
+
 
 class DiagnosticResult(BaseModel):
     misconception: str = Field(
@@ -38,6 +58,11 @@ class DiagnosticResult(BaseModel):
 
     reasoning_pattern: str = Field(
         description="Description of the student's reasoning pattern."
+    )
+
+    concept_id: str | None = Field(
+        default=None,
+        description="The DSA concept associated with the misconception.",
     )
 
     knowledge_level: str = Field(
@@ -161,6 +186,8 @@ class LearningState(BaseModel):
 
     wrong_socratic_count: int = 0
     backward_loop_count: int = 0
+
+    concepts: dict[str, ConceptLearningEntry] = Field(default_factory=dict)
 
 
 class PlannerDecision(BaseModel):

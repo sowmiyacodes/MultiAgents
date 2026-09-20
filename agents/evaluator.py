@@ -56,6 +56,42 @@ class EvaluatorAgent:
         validated = validate_llm_output(raw, EvaluationResult)
 
         if validated is not None:
+            # Keep the core boundary-elimination loop deterministic when the
+            # response contains an unambiguous contradiction or invariant.
+            if misconception_id == "M1_INCOMPLETE_ELIMINATION":
+                deterministic = fallback_evaluate(
+                    student_response=clean_response,
+                    misconception_id=misconception_id,
+                    topic=topic,
+                    stage=stage,
+                    target_reasoning=target_reasoning,
+                    question_or_task=question_or_task,
+                )
+                response_lower = clean_response.lower()
+                has_invariant = any(
+                    marker in response_lower
+                    for marker in (
+                        "mid + 1",
+                        "mid+1",
+                        "all indices",
+                        "all elements",
+                        "eliminated",
+                        "ruled out",
+                        "impossible",
+                    )
+                )
+                has_incomplete_rule = any(
+                    marker in response_lower
+                    for marker in (
+                        "left++",
+                        "right--",
+                        "move by one",
+                        "only one",
+                        "still works",
+                    )
+                )
+                if has_invariant or has_incomplete_rule:
+                    return deterministic
             return validated
 
         return fallback_evaluate(

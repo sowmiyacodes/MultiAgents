@@ -1,0 +1,110 @@
+{
+  "session_id": "sess_f86ad27792",
+  "last_updated": 1789882886.9388394,
+  "last_topic": "binary_search",
+  "misconception_detected": "M1_INCOMPLETE_ELIMINATION",
+  "transfer_passed": false,
+  "socratic_rounds_count": 0,
+  "attempts": [],
+  "events": [
+    {
+      "id": 1,
+      "session_id": "sess_f86ad27792",
+      "student_id": "student_001",
+      "event_type": "SESSION_STARTED",
+      "timestamp": 1789882845.1881418,
+      "data_json": "{\"initial_query\": \"int left = 0; int right = n - 1; left++;\"}",
+      "data": {
+        "initial_query": "int left = 0; int right = n - 1; left++;"
+      }
+    },
+    {
+      "id": 2,
+      "session_id": "sess_f86ad27792",
+      "student_id": "student_001",
+      "event_type": "STATE_TRANSITION",
+      "timestamp": 1789882845.189402,
+      "data_json": "{\"from\": \"START\", \"to\": \"DIAGNOSING\"}",
+      "data": {
+        "from": "START",
+        "to": "DIAGNOSING"
+      }
+    },
+    {
+      "id": 3,
+      "session_id": "sess_f86ad27792",
+      "student_id": "student_001",
+      "event_type": "QUESTION_CLASSIFIED",
+      "timestamp": 1789882857.5989382,
+      "data_json": "{\"domain\": \"binary_search\", \"topic\": \"binary_search\", \"subconcept\": \"boundary_update\", \"difficulty\": \"medium\", \"intent\": \"WRONG_ANSWER\", \"adaptive\": true, \"reasoning\": \"The student shows binary search code with `left++` instead of the correct `left = mid + 1`, indicating a misconception about how the search space is reduced in binary search.\"}",
+      "data": {
+        "domain": "binary_search",
+        "topic": "binary_search",
+        "subconcept": "boundary_update",
+        "difficulty": "medium",
+        "intent": "WRONG_ANSWER",
+        "adaptive": true,
+        "reasoning": "The student shows binary search code with `left++` instead of the correct `left = mid + 1`, indicating a misconception about how the search space is reduced in binary search."
+      }
+    },
+    {
+      "id": 4,
+      "session_id": "sess_f86ad27792",
+      "student_id": "student_001",
+      "event_type": "DIAGNOSIS_CREATED",
+      "timestamp": 1789882869.680243,
+      "data_json": "{\"misconception_id\": \"M1_INCOMPLETE_ELIMINATION\", \"concept\": \"boundary update in binary search\", \"evidence\": [\"Student writes `left++` to update the left boundary, which moves it by only 1 instead of jumping past the midpoint (e.g., `left = mid + 1`)\"], \"severity\": \"foundational\", \"confidence\": 0.9, \"invariant\": \"In binary search, each boundary update must eliminate at least half of the remaining search space, not just a single element\", \"is_known\": true, \"topic\": \"binary_search\", \"subconcept\": \"boundary_update\", \"intent\": \"CONCEPTUAL_CONFUSION\", \"wants_direct_explanation\": false}",
+      "data": {
+        "misconception_id": "M1_INCOMPLETE_ELIMINATION",
+        "concept": "boundary update in binary search",
+        "evidence": [
+          "Student writes `left++` to update the left boundary, which moves it by only 1 instead of jumping past the midpoint (e.g., `left = mid + 1`)"
+        ],
+        "severity": "foundational",
+        "confidence": 0.9,
+        "invariant": "In binary search, each boundary update must eliminate at least half of the remaining search space, not just a single element",
+        "is_known": true,
+        "topic": "binary_search",
+        "subconcept": "boundary_update",
+        "intent": "CONCEPTUAL_CONFUSION",
+        "wants_direct_explanation": false
+      }
+    },
+    {
+      "id": 5,
+      "session_id": "sess_f86ad27792",
+      "student_id": "student_001",
+      "event_type": "STATE_TRANSITION",
+      "timestamp": 1789882869.7019467,
+      "data_json": "{\"from\": \"DIAGNOSING\", \"to\": \"SOCRATIC_GUIDANCE\"}",
+      "data": {
+        "from": "DIAGNOSING",
+        "to": "SOCRATIC_GUIDANCE"
+      }
+    },
+    {
+      "id": 6,
+      "session_id": "sess_f86ad27792",
+      "student_id": "student_001",
+      "event_type": "SOCRATIC_QUESTION_ASKED",
+      "timestamp": 1789882886.9073548,
+      "data_json": "{\"angle_id\": \"ELIMINATED_RANGE_PROOF\", \"question\": \"Consider a sorted array of 10 elements where mid = 5 and nums[mid] < target. You know the target must be somewhere to the right of mid. Which indices are provably eliminated from containing the target \\u2014 and how does that compare to only incrementing left by 1 (left++)?\"}",
+      "data": {
+        "angle_id": "ELIMINATED_RANGE_PROOF",
+        "question": "Consider a sorted array of 10 elements where mid = 5 and nums[mid] < target. You know the target must be somewhere to the right of mid. Which indices are provably eliminated from containing the target \u2014 and how does that compare to only incrementing left by 1 (left++)?"
+      }
+    },
+    {
+      "id": 7,
+      "session_id": "sess_f86ad27792",
+      "student_id": "student_001",
+      "event_type": "STATE_TRANSITION",
+      "timestamp": 1789882886.9272187,
+      "data_json": "{\"from\": \"SOCRATIC_GUIDANCE\", \"to\": \"WAITING_FOR_STUDENT\"}",
+      "data": {
+        "from": "SOCRATIC_GUIDANCE",
+        "to": "WAITING_FOR_STUDENT"
+      }
+    }
+  ]
+}

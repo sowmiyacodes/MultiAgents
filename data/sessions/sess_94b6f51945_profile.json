@@ -1,0 +1,74 @@
+{
+  "session_id": "sess_94b6f51945",
+  "last_updated": 1789885122.7850418,
+  "last_topic": "binary_search",
+  "misconception_detected": null,
+  "transfer_passed": false,
+  "socratic_rounds_count": 0,
+  "attempts": [],
+  "events": [
+    {
+      "id": 8,
+      "session_id": "sess_94b6f51945",
+      "student_id": "student_001",
+      "event_type": "SESSION_STARTED",
+      "timestamp": 1789885087.5392349,
+      "data_json": "{\"initial_query\": \"def factorial(n):\\n    # Base case\\n    if n == 0 or n == 1:\\n        return 1\\n\\n    # Recursive case\\n    return n * factorial(n - 1)\\n\\n\\nn = 5\\nprint(\\\"Factorial:\\\", factorial(n))\"}",
+      "data": {
+        "initial_query": "def factorial(n):\n    # Base case\n    if n == 0 or n == 1:\n        return 1\n\n    # Recursive case\n    return n * factorial(n - 1)\n\n\nn = 5\nprint(\"Factorial:\", factorial(n))"
+      }
+    },
+    {
+      "id": 9,
+      "session_id": "sess_94b6f51945",
+      "student_id": "student_001",
+      "event_type": "STATE_TRANSITION",
+      "timestamp": 1789885087.546234,
+      "data_json": "{\"from\": \"START\", \"to\": \"DIAGNOSING\"}",
+      "data": {
+        "from": "START",
+        "to": "DIAGNOSING"
+      }
+    },
+    {
+      "id": 10,
+      "session_id": "sess_94b6f51945",
+      "student_id": "student_001",
+      "event_type": "QUESTION_CLASSIFIED",
+      "timestamp": 1789885102.5698483,
+      "data_json": "{\"domain\": \"recursion\", \"topic\": \"factorial\", \"subconcept\": \"recursive function implementation\", \"difficulty\": \"easy\", \"intent\": \"SOLUTION_ATTEMPT\", \"adaptive\": false, \"reasoning\": \"Student presented a correct recursive factorial implementation with no expressed confusion, error, or misconception.\"}",
+      "data": {
+        "domain": "recursion",
+        "topic": "factorial",
+        "subconcept": "recursive function implementation",
+        "difficulty": "easy",
+        "intent": "SOLUTION_ATTEMPT",
+        "adaptive": false,
+        "reasoning": "Student presented a correct recursive factorial implementation with no expressed confusion, error, or misconception."
+      }
+    },
+    {
+      "id": 11,
+      "session_id": "sess_94b6f51945",
+      "student_id": "student_001",
+      "event_type": "GENERAL_ANSWER_GIVEN",
+      "timestamp": 1789885122.7152858,
+      "data_json": "{\"topic\": \"factorial\"}",
+      "data": {
+        "topic": "factorial"
+      }
+    },
+    {
+      "id": 12,
+      "session_id": "sess_94b6f51945",
+      "student_id": "student_001",
+      "event_type": "STATE_TRANSITION",
+      "timestamp": 1789885122.7380872,
+      "data_json": "{\"from\": \"DIAGNOSING\", \"to\": \"COMPLETE\"}",
+      "data": {
+        "from": "DIAGNOSING",
+        "to": "COMPLETE"
+      }
+    }
+  ]
+}

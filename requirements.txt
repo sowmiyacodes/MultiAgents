@@ -1,7 +1,7 @@
 # Minimal dependencies — stdlib + these two are all you need.
 pydantic>=2.7          # typed contracts at every boundary
 httpx>=0.27            # OpenRouter LLM calls (graceful no-op without API key)
+flask>=3.0             # Web UI and JSON API
 
 # dev
 pytest>=8.0
-
