@@ -1,0 +1,74 @@
+{
+  "session_id": "sess_5c77525892",
+  "last_updated": 1789876669.3161588,
+  "last_topic": "binary_search",
+  "misconception_detected": null,
+  "transfer_passed": false,
+  "socratic_rounds_count": 0,
+  "attempts": [],
+  "events": [
+    {
+      "id": 57,
+      "session_id": "sess_5c77525892",
+      "student_id": "student_001",
+      "event_type": "SESSION_STARTED",
+      "timestamp": 1789876630.7402287,
+      "data_json": "{\"initial_query\": \"#include <stdio.h>\\n\\n#define MAX 5\\n\\nint queue[MAX];\\nint front = -1;\\nint rear = -1;\\n\\nvoid enqueue(int value) {\\n    if (rear == MAX - 1) {\\n        printf(\\\"Queue Overflow\\\\n\\\");\\n        return;\\n    }\\n\\n    if (front == -1)\\n        front = 0;\\n\\n    queue[rear] = value;   // BUG\\n    rear++;\\n}\\n\\nint dequeue() {\\n    if (front == -1 || front > rear) {\\n        printf(\\\"Queue Underflow\\\\n\\\");\\n        return -1;\\n    }\\n\\n    int value = queue[front];\\n    front++;\\n    return value;\\n}\\n\\nvoid display() {\\n    if (front == -1) {\\n        printf(\\\"Queue is empty\\\\n\\\");\\n        return;\\n    }\\n\\n    for (int i = front; i <= rear; i++) {\\n        printf(\\\"%d \\\", queue[i]);\\n    }\\n    printf(\\\"\\\\n\\\");\\n}\\n\\nint main() {\\n    enqueue(10);\\n    enqueue(20);\\n    enqueue(30);\\n\\n    display();\\n\\n    printf(\\\"Deleted: %d\\\\n\\\", dequeue());\\n\\n    display();\\n\\n    return 0;\\n}\"}",
+      "data": {
+        "initial_query": "#include <stdio.h>\n\n#define MAX 5\n\nint queue[MAX];\nint front = -1;\nint rear = -1;\n\nvoid enqueue(int value) {\n    if (rear == MAX - 1) {\n        printf(\"Queue Overflow\\n\");\n        return;\n    }\n\n    if (front == -1)\n        front = 0;\n\n    queue[rear] = value;   // BUG\n    rear++;\n}\n\nint dequeue() {\n    if (front == -1 || front > rear) {\n        printf(\"Queue Underflow\\n\");\n        return -1;\n    }\n\n    int value = queue[front];\n    front++;\n    return value;\n}\n\nvoid display() {\n    if (front == -1) {\n        printf(\"Queue is empty\\n\");\n        return;\n    }\n\n    for (int i = front; i <= rear; i++) {\n        printf(\"%d \", queue[i]);\n    }\n    printf(\"\\n\");\n}\n\nint main() {\n    enqueue(10);\n    enqueue(20);\n    enqueue(30);\n\n    display();\n\n    printf(\"Deleted: %d\\n\", dequeue());\n\n    display();\n\n    return 0;\n}"
+      }
+    },
+    {
+      "id": 58,
+      "session_id": "sess_5c77525892",
+      "student_id": "student_001",
+      "event_type": "STATE_TRANSITION",
+      "timestamp": 1789876630.7418652,
+      "data_json": "{\"from\": \"START\", \"to\": \"DIAGNOSING\"}",
+      "data": {
+        "from": "START",
+        "to": "DIAGNOSING"
+      }
+    },
+    {
+      "id": 59,
+      "session_id": "sess_5c77525892",
+      "student_id": "student_001",
+      "event_type": "QUESTION_CLASSIFIED",
+      "timestamp": 1789876633.5958047,
+      "data_json": "{\"domain\": \"queues\", \"topic\": \"queues\", \"subconcept\": null, \"difficulty\": null, \"intent\": \"GENERAL_EXPLANATION\", \"adaptive\": false, \"reasoning\": \"Keyword-based classification: domain=queues, adaptive=False\"}",
+      "data": {
+        "domain": "queues",
+        "topic": "queues",
+        "subconcept": null,
+        "difficulty": null,
+        "intent": "GENERAL_EXPLANATION",
+        "adaptive": false,
+        "reasoning": "Keyword-based classification: domain=queues, adaptive=False"
+      }
+    },
+    {
+      "id": 60,
+      "session_id": "sess_5c77525892",
+      "student_id": "student_001",
+      "event_type": "GENERAL_ANSWER_GIVEN",
+      "timestamp": 1789876669.305813,
+      "data_json": "{\"topic\": \"queues\"}",
+      "data": {
+        "topic": "queues"
+      }
+    },
+    {
+      "id": 61,
+      "session_id": "sess_5c77525892",
+      "student_id": "student_001",
+      "event_type": "STATE_TRANSITION",
+      "timestamp": 1789876669.307648,
+      "data_json": "{\"from\": \"DIAGNOSING\", \"to\": \"COMPLETE\"}",
+      "data": {
+        "from": "DIAGNOSING",
+        "to": "COMPLETE"
+      }
+    }
+  ]
+}

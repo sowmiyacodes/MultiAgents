@@ -1,0 +1,74 @@
+{
+  "session_id": "sess_3c930fee99",
+  "last_updated": 1789852637.7745187,
+  "last_topic": "binary_search",
+  "misconception_detected": null,
+  "transfer_passed": false,
+  "socratic_rounds_count": 0,
+  "attempts": [],
+  "events": [
+    {
+      "id": 267,
+      "session_id": "sess_3c930fee99",
+      "student_id": "student_001",
+      "event_type": "SESSION_STARTED",
+      "timestamp": 1789852630.4152687,
+      "data_json": "{\"initial_query\": \"what are linked list\"}",
+      "data": {
+        "initial_query": "what are linked list"
+      }
+    },
+    {
+      "id": 268,
+      "session_id": "sess_3c930fee99",
+      "student_id": "student_001",
+      "event_type": "STATE_TRANSITION",
+      "timestamp": 1789852630.4164424,
+      "data_json": "{\"from\": \"START\", \"to\": \"DIAGNOSING\"}",
+      "data": {
+        "from": "START",
+        "to": "DIAGNOSING"
+      }
+    },
+    {
+      "id": 269,
+      "session_id": "sess_3c930fee99",
+      "student_id": "student_001",
+      "event_type": "QUESTION_CLASSIFIED",
+      "timestamp": 1789852635.0838792,
+      "data_json": "{\"domain\": \"linked_lists\", \"topic\": \"linked_lists\", \"subconcept\": null, \"difficulty\": \"easy\", \"intent\": \"GENERAL_EXPLANATION\", \"adaptive\": false, \"reasoning\": \"The student is asking a basic definitional question about linked lists with no specific misconception or error evident.\"}",
+      "data": {
+        "domain": "linked_lists",
+        "topic": "linked_lists",
+        "subconcept": null,
+        "difficulty": "easy",
+        "intent": "GENERAL_EXPLANATION",
+        "adaptive": false,
+        "reasoning": "The student is asking a basic definitional question about linked lists with no specific misconception or error evident."
+      }
+    },
+    {
+      "id": 270,
+      "session_id": "sess_3c930fee99",
+      "student_id": "student_001",
+      "event_type": "GENERAL_ANSWER_GIVEN",
+      "timestamp": 1789852637.7540357,
+      "data_json": "{\"topic\": \"linked_lists\"}",
+      "data": {
+        "topic": "linked_lists"
+      }
+    },
+    {
+      "id": 271,
+      "session_id": "sess_3c930fee99",
+      "student_id": "student_001",
+      "event_type": "STATE_TRANSITION",
+      "timestamp": 1789852637.7716281,
+      "data_json": "{\"from\": \"DIAGNOSING\", \"to\": \"COMPLETE\"}",
+      "data": {
+        "from": "DIAGNOSING",
+        "to": "COMPLETE"
+      }
+    }
+  ]
+}

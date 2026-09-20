@@ -111,7 +111,7 @@ class TutorStore:
         self.path = Path(db_path)
         if self.path.parent != Path("."):
             self.path.parent.mkdir(parents=True, exist_ok=True)
-        self.db = sqlite3.connect(str(self.path), isolation_level=None)
+        self.db = sqlite3.connect(str(self.path),isolation_level=None,check_same_thread=False)
         self.db.row_factory = sqlite3.Row
         self.db.execute("PRAGMA journal_mode=WAL")
         self.db.execute("PRAGMA foreign_keys=ON")

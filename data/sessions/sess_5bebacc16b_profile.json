@@ -1,0 +1,74 @@
+{
+  "session_id": "sess_5bebacc16b",
+  "last_updated": 1789869464.6730194,
+  "last_topic": "binary_search",
+  "misconception_detected": null,
+  "transfer_passed": false,
+  "socratic_rounds_count": 0,
+  "attempts": [],
+  "events": [
+    {
+      "id": 322,
+      "session_id": "sess_5bebacc16b",
+      "student_id": "student_001",
+      "event_type": "SESSION_STARTED",
+      "timestamp": 1789869463.4313645,
+      "data_json": "{\"initial_query\": \"#include <stdio.h>\\n\\n#define MAX 5\\n\\nint stack[MAX];\\nint top = -1;\\n\\nvoid push(int value) {\\n    if (top == MAX) {\\n        printf(\\\"Stack Overflow\\\\n\\\");\\n        return;\\n    }\\n\\n    stack[top] = value;\\n    top++;\\n}\\n\\nint pop() {\\n    if (top == -1) {\\n        printf(\\\"Stack Underflow\\\\n\\\");\\n        return -1;\\n    }\\n\\n    return stack[top--];\\n}\\n\\nvoid display() {\\n    if (top == -1) {\\n        printf(\\\"Stack is empty\\\\n\\\");\\n        return;\\n    }\\n\\n    for (int i = 0; i <= top; i++) {\\n        printf(\\\"%d \\\", stack[i]);\\n    }\\n    printf(\\\"\\\\n\\\");\\n}\\n\\nint main() {\\n    push(10);\\n    push(20);\\n    push(30);\\n\\n    display();\\n\\n    printf(\\\"Popped: %d\\\\n\\\", pop());\\n\\n    return 0;\\n}\"}",
+      "data": {
+        "initial_query": "#include <stdio.h>\n\n#define MAX 5\n\nint stack[MAX];\nint top = -1;\n\nvoid push(int value) {\n    if (top == MAX) {\n        printf(\"Stack Overflow\\n\");\n        return;\n    }\n\n    stack[top] = value;\n    top++;\n}\n\nint pop() {\n    if (top == -1) {\n        printf(\"Stack Underflow\\n\");\n        return -1;\n    }\n\n    return stack[top--];\n}\n\nvoid display() {\n    if (top == -1) {\n        printf(\"Stack is empty\\n\");\n        return;\n    }\n\n    for (int i = 0; i <= top; i++) {\n        printf(\"%d \", stack[i]);\n    }\n    printf(\"\\n\");\n}\n\nint main() {\n    push(10);\n    push(20);\n    push(30);\n\n    display();\n\n    printf(\"Popped: %d\\n\", pop());\n\n    return 0;\n}"
+      }
+    },
+    {
+      "id": 323,
+      "session_id": "sess_5bebacc16b",
+      "student_id": "student_001",
+      "event_type": "STATE_TRANSITION",
+      "timestamp": 1789869463.4340148,
+      "data_json": "{\"from\": \"START\", \"to\": \"DIAGNOSING\"}",
+      "data": {
+        "from": "START",
+        "to": "DIAGNOSING"
+      }
+    },
+    {
+      "id": 324,
+      "session_id": "sess_5bebacc16b",
+      "student_id": "student_001",
+      "event_type": "QUESTION_CLASSIFIED",
+      "timestamp": 1789869464.323423,
+      "data_json": "{\"domain\": \"stacks\", \"topic\": \"stacks\", \"subconcept\": null, \"difficulty\": null, \"intent\": \"GENERAL_EXPLANATION\", \"adaptive\": false, \"reasoning\": \"Keyword-based classification: domain=stacks, adaptive=False\"}",
+      "data": {
+        "domain": "stacks",
+        "topic": "stacks",
+        "subconcept": null,
+        "difficulty": null,
+        "intent": "GENERAL_EXPLANATION",
+        "adaptive": false,
+        "reasoning": "Keyword-based classification: domain=stacks, adaptive=False"
+      }
+    },
+    {
+      "id": 325,
+      "session_id": "sess_5bebacc16b",
+      "student_id": "student_001",
+      "event_type": "GENERAL_ANSWER_GIVEN",
+      "timestamp": 1789869464.6512291,
+      "data_json": "{\"topic\": \"stacks\"}",
+      "data": {
+        "topic": "stacks"
+      }
+    },
+    {
+      "id": 326,
+      "session_id": "sess_5bebacc16b",
+      "student_id": "student_001",
+      "event_type": "STATE_TRANSITION",
+      "timestamp": 1789869464.6695824,
+      "data_json": "{\"from\": \"DIAGNOSING\", \"to\": \"COMPLETE\"}",
+      "data": {
+        "from": "DIAGNOSING",
+        "to": "COMPLETE"
+      }
+    }
+  ]
+}

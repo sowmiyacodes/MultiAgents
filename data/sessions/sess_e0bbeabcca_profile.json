@@ -1,0 +1,74 @@
+{
+  "session_id": "sess_e0bbeabcca",
+  "last_updated": 1789854985.6216617,
+  "last_topic": "binary_search",
+  "misconception_detected": null,
+  "transfer_passed": false,
+  "socratic_rounds_count": 0,
+  "attempts": [],
+  "events": [
+    {
+      "id": 1,
+      "session_id": "sess_e0bbeabcca",
+      "student_id": "student_001",
+      "event_type": "SESSION_STARTED",
+      "timestamp": 1789854985.6132157,
+      "data_json": "{\"initial_query\": \"Explain binary search bounds\"}",
+      "data": {
+        "initial_query": "Explain binary search bounds"
+      }
+    },
+    {
+      "id": 2,
+      "session_id": "sess_e0bbeabcca",
+      "student_id": "student_001",
+      "event_type": "STATE_TRANSITION",
+      "timestamp": 1789854985.6139472,
+      "data_json": "{\"from\": \"START\", \"to\": \"DIAGNOSING\"}",
+      "data": {
+        "from": "START",
+        "to": "DIAGNOSING"
+      }
+    },
+    {
+      "id": 3,
+      "session_id": "sess_e0bbeabcca",
+      "student_id": "student_001",
+      "event_type": "QUESTION_CLASSIFIED",
+      "timestamp": 1789854985.6146867,
+      "data_json": "{\"domain\": \"binary_search\", \"topic\": \"binary_search\", \"subconcept\": null, \"difficulty\": null, \"intent\": \"GENERAL_EXPLANATION\", \"adaptive\": false, \"reasoning\": \"Keyword-based classification: domain=binary_search, adaptive=False\"}",
+      "data": {
+        "domain": "binary_search",
+        "topic": "binary_search",
+        "subconcept": null,
+        "difficulty": null,
+        "intent": "GENERAL_EXPLANATION",
+        "adaptive": false,
+        "reasoning": "Keyword-based classification: domain=binary_search, adaptive=False"
+      }
+    },
+    {
+      "id": 4,
+      "session_id": "sess_e0bbeabcca",
+      "student_id": "student_001",
+      "event_type": "GENERAL_ANSWER_GIVEN",
+      "timestamp": 1789854985.6154778,
+      "data_json": "{\"topic\": \"binary_search\"}",
+      "data": {
+        "topic": "binary_search"
+      }
+    },
+    {
+      "id": 5,
+      "session_id": "sess_e0bbeabcca",
+      "student_id": "student_001",
+      "event_type": "STATE_TRANSITION",
+      "timestamp": 1789854985.6162655,
+      "data_json": "{\"from\": \"DIAGNOSING\", \"to\": \"COMPLETE\"}",
+      "data": {
+        "from": "DIAGNOSING",
+        "to": "COMPLETE"
+      }
+    }
+  ]
+}

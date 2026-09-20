@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+
+{% block title %}THINKAGAIN — Learn & Chatbot{% endblock %}
+
+{% block content %}
+<div class="chatbot-container">
+    <!-- Left Column: Interactive Tutoring Flow -->
+    <div class="chat-main-column">
+        <!-- Welcome / Initial Query State -->
+        <div id="welcome-card" class="welcome-card card">
+            <div class="welcome-badge">
+                <span class="pulse-icon">●</span> Ready to Analyze
+            </div>
+            <h1 class="welcome-title">What DSA algorithm, code, or concept<br>would you like to analyze today?</h1>
+            <p class="welcome-subtitle">
+                Paste your code implementation, algorithm logic, or DSA question. Our multi-agent system will diagnose invariants, guide your reasoning socratically, and verify mastery with fresh transfer challenges.
+            </p>
+
+            <form id="initial-query-form" class="initial-form">
+                <div class="form-group">
+                    <label for="initial-query-input" class="form-label">Your Code or Approach</label>
+                    <textarea id="initial-query-input" class="code-textarea" rows="7" placeholder="int left = 0;&#10;int right = nums.length - 1;&#10;while (left <= right) {&#10;    int mid = (left + right) / 2;&#10;    if (nums[mid] == target) return mid;&#10;    if (nums[mid] < target) left++; else right--;&#10;}&#10;return -1;"></textarea>
+                </div>
+
+                <div class="quick-examples">
+                    <span class="quick-label">Try example:</span>
+                    <button type="button" class="chip" data-sample="binary_search">Binary Search Boundary (left++)</button>
+                    <button type="button" class="chip" data-sample="two_pointers">Two Pointers Movement</button>
+                    <button type="button" class="chip" data-sample="general_question">What is Binary Search invariant?</button>
+                </div>
+
+                <div class="form-footer">
+                    <button type="submit" id="btn-start-learning" class="btn btn-primary btn-lg">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                        Start Learning
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Active Conversation State -->
+        <div id="active-chat-wrapper" class="active-chat-wrapper card hidden">
+            <div class="chat-header">
+                <div>
+                    <h2 class="chat-header-title">THINKAGAIN</h2>
+                    <p class="chat-header-sub">Adaptive DSA Learning</p>
+                </div>
+                <div class="chat-header-status">
+                    <span id="chat-phase-badge" class="badge badge-purple">Socratic Guidance</span>
+                </div>
+            </div>
+
+            <div id="messages-container" class="messages-container">
+                <!-- Dynamically populated by chatbot.js -->
+            </div>
+
+            <!-- Student Support Options Card (When reasoning needs another step) -->
+            <div id="student-options-card" class="student-options-card hidden">
+                <div class="options-header">
+                    <div class="options-icon">💡</div>
+                    <div>
+                        <h4 class="options-title">Need some help?</h4>
+                        <p class="options-desc">Your reasoning needs another step. Choose how you want to continue:</p>
+                    </div>
+                </div>
+                <div class="options-buttons">
+                    <button type="button" id="opt-try-again" class="btn btn-secondary">
+                        <strong>Try Again</strong>
+                        <span>Answer next Socratic question from another angle</span>
+                    </button>
+                    <button type="button" id="opt-hint" class="btn btn-secondary">
+                        <strong>Get a Hint</strong>
+                        <span>Receive a progressive invariant hint</span>
+                    </button>
+                    <button type="button" id="opt-worked-example" class="btn btn-purple">
+                        <strong>See a Worked Example</strong>
+                        <span>View explanation & worked example from Tutor Agent</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Terminal Outcome Banner (Download Session JSON) -->
+            <div id="terminal-outcome-card" class="terminal-outcome-card hidden">
+                <div class="terminal-icon" id="terminal-icon">✓</div>
+                <div class="terminal-body">
+                    <h3 id="terminal-title" class="terminal-title">SESSION COMPLETED SUCCESSFULLY</h3>
+                    <p id="terminal-desc" class="terminal-desc">You successfully demonstrated the required reasoning and validated understanding on fresh transfer tasks.</p>
+                </div>
+                <div class="terminal-actions">
+                    <button type="button" id="btn-download-json" class="btn btn-success btn-lg">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        Download Session JSON
+                    </button>
+                </div>
+            </div>
+
+            <!-- Student Answer Input Area -->
+            <div id="chat-input-area" class="chat-input-area">
+                <form id="chat-form" class="chat-form">
+                    <div class="textarea-container">
+                        <textarea id="student-answer-input" class="chat-textarea" rows="3" placeholder="Type your answer or code... (Ctrl + Enter to send)"></textarea>
+                    </div>
+                    <div class="input-controls">
+                        <span class="input-hint">Press <strong>Ctrl + Enter</strong> to send, <strong>Enter</strong> for new line</span>
+                        <button type="submit" id="btn-send-answer" class="btn btn-primary">
+                            <span>Send Answer</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column: Live Agent Status Panel -->
+    <aside class="agent-panel-column">
+        <div class="agent-panel card">
+            <h3 class="panel-section-title">Live Agent Orchestration</h3>
+            
+            <div class="panel-card">
+                <div class="panel-card-label">CURRENT AGENT</div>
+                <div class="panel-card-value">
+                    <span id="agent-icon" class="agent-avatar">🤖</span>
+                    <span id="agent-name" class="agent-name">Socratic Agent</span>
+                </div>
+                <div class="panel-card-sub">
+                    <span class="status-indicator live"></span>
+                    <span id="agent-activity">ACTIVE</span>
+                </div>
+            </div>
+
+            <div class="panel-card">
+                <div class="panel-card-label">CURRENT PHASE</div>
+                <div id="panel-phase" class="panel-card-text font-semibold">Socratic Guidance</div>
+            </div>
+
+            <div class="panel-card">
+                <div class="panel-card-label">CONCEPT</div>
+                <div id="panel-concept" class="panel-card-text font-semibold">Binary Search</div>
+                <div id="panel-subconcept" class="panel-card-subtext">Boundary Update Invariant</div>
+            </div>
+
+            <div class="panel-card">
+                <div class="panel-card-label">STATUS</div>
+                <div id="panel-status" class="panel-card-text text-muted">Waiting for your answer</div>
+            </div>
+
+            <!-- Invariant / Diagnosis Highlights -->
+            <div id="diagnosis-panel-card" class="panel-card hidden">
+                <div class="panel-card-label">DIAGNOSED INVARIANT</div>
+                <div id="panel-invariant" class="panel-card-mono">nums[mid] < target eliminates mid and left</div>
+            </div>
+
+            <!-- Quick Link to State Machine Graph -->
+            <div class="panel-footer">
+                <a href="{{ url_for('graph_page') }}" class="graph-link-card">
+                    <div class="graph-link-info">
+                        <strong>View Agent Flow Graph</strong>
+                        <span>Visualize real state transitions</span>
+                    </div>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </a>
+            </div>
+        </div>
+    </aside>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
+{% endblock %}

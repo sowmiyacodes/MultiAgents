@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block title %}THINKAGAIN — Agent Flow{% endblock %}
+
+{% block content %}
+<div class="graph-page-container">
+
+    <!-- ── Hero Header ────────────────────────────────────────────────────── -->
+    <div class="graph-hero-header">
+        <div class="graph-hero-badge">
+            <span class="graph-hero-badge-dot"></span>
+            Live State Machine
+        </div>
+        <h1 class="graph-hero-title">Agent Flow</h1>
+        <p class="graph-hero-subtitle">ThinkAgain — Adaptive Multi-Agent DSA Tutoring</p>
+    </div>
+
+    <!-- ── Graph Canvas ───────────────────────────────────────────────────── -->
+    <div class="graph-workspace card">
+        <div class="graph-canvas-container" id="graph-container">
+            <!-- SVG rendered by graph.js -->
+            <svg id="state-graph-svg"
+                 width="100%"
+                 height="700"
+                 viewBox="0 0 1660 700"
+                 preserveAspectRatio="xMidYMid meet">
+
+                <defs>
+                    <!-- Active flow arrowhead (purple) -->
+                    <marker id="arrow-active"
+                            viewBox="0 0 12 12" refX="10" refY="6"
+                            markerWidth="7" markerHeight="7"
+                            orient="auto-start-reverse">
+                        <path d="M 0 2 L 10 6 L 0 10 Z" fill="#7C3AED"/>
+                    </marker>
+
+                    <!-- Inactive / possible transition arrowhead (light gray) -->
+                    <marker id="arrow"
+                            viewBox="0 0 12 12" refX="10" refY="6"
+                            markerWidth="6" markerHeight="6"
+                            orient="auto-start-reverse">
+                        <path d="M 0 2 L 10 6 L 0 10 Z" fill="#CBD5E1"/>
+                    </marker>
+
+                    <!-- Loop / return arrowhead (blue-gray dashed) -->
+                    <marker id="arrow-loop"
+                            viewBox="0 0 12 12" refX="10" refY="6"
+                            markerWidth="6" markerHeight="6"
+                            orient="auto-start-reverse">
+                        <path d="M 0 2 L 10 6 L 0 10 Z" fill="#94A3B8"/>
+                    </marker>
+
+                    <!-- Purple glow for current node -->
+                    <filter id="purple-glow" x="-25%" y="-25%" width="150%" height="150%">
+                        <feDropShadow dx="0" dy="0" stdDeviation="8"
+                                      flood-color="#7C3AED" flood-opacity="0.30"/>
+                    </filter>
+
+                    <!-- Subtle card shadow for all nodes -->
+                    <filter id="card-shadow" x="-10%" y="-10%" width="120%" height="120%">
+                        <feDropShadow dx="0" dy="3" stdDeviation="4"
+                                      flood-color="#000000" flood-opacity="0.07"/>
+                    </filter>
+
+                    <!-- Green glow for completed nodes -->
+                    <filter id="green-glow" x="-25%" y="-25%" width="150%" height="150%">
+                        <feDropShadow dx="0" dy="0" stdDeviation="5"
+                                      flood-color="#10B981" flood-opacity="0.20"/>
+                    </filter>
+                </defs>
+
+                <!-- Edges rendered beneath nodes -->
+                <g id="edges-layer"></g>
+                <!-- Nodes rendered on top -->
+                <g id="nodes-layer"></g>
+                <!-- Edge labels (small, optional) -->
+                <g id="labels-layer"></g>
+            </svg>
+        </div>
+
+        <!-- ── Legend Bar ──────────────────────────────────────────────────── -->
+        <div class="graph-legend-bar">
+            <div class="legend-section">
+                <span class="legend-line legend-line-active"></span>
+                <span class="legend-label">Active Flow</span>
+            </div>
+            <div class="legend-section">
+                <span class="legend-line legend-line-inactive"></span>
+                <span class="legend-label">Possible Transition</span>
+            </div>
+            <div class="legend-section">
+                <span class="legend-line legend-line-loop"></span>
+                <span class="legend-label">Loop / Return Path</span>
+            </div>
+            <div class="legend-divider"></div>
+            <div class="legend-section">
+                <span class="legend-dot legend-dot-current"></span>
+                <span class="legend-label">Current State</span>
+            </div>
+            <div class="legend-section">
+                <span class="legend-dot legend-dot-completed"></span>
+                <span class="legend-label">Completed State</span>
+            </div>
+            <div class="legend-section">
+                <span class="legend-dot legend-dot-waiting"></span>
+                <span class="legend-label">Waiting State</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Info Cards ─────────────────────────────────────────────────────── -->
+    <div class="graph-info-grid">
+        <div class="card info-card">
+            <h4 class="info-card-title">Current Machine State</h4>
+            <div class="state-status-badge" id="info-current-state">START</div>
+            <p id="info-state-desc" class="info-card-desc">Session initialized, preparing for diagnostic classification.</p>
+        </div>
+
+        <div class="card info-card">
+            <h4 class="info-card-title">Active Pedagogical Agent</h4>
+            <div class="agent-highlight" id="info-current-agent">🤖 Socratic Agent</div>
+            <p id="info-agent-phase" class="info-card-desc">Phase: Socratic Guidance</p>
+        </div>
+
+        <div class="card info-card">
+            <h4 class="info-card-title">Session Persistence</h4>
+            <div class="session-id-display" id="info-session-id">None</div>
+            <p class="info-card-desc">Survives navigation and browser refreshes in SQLite store.</p>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/graph.js') }}"></script>
+{% endblock %}
